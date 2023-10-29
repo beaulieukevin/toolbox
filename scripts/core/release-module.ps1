@@ -197,7 +197,7 @@ function Get-ConfigReleasecontent {
   $content = $content.Replace("{{CONFIG_NEW_VERSION}}", $ConfigNewVersion)
   $appConfig = Get-AppConfig
   $toolboxGitRepository = $appConfig.toolbox.gitRepository
-  $configChangelogUrl = Get-MarkdownFileUrlFromRepository -GitRepository $toolboxGitRepository -MarkdownType "CHANGELOG_CONFIG"
+  $configChangelogUrl = Get-MarkdownFileUrlFromRepository -GitRepository $toolboxGitRepository -MarkdownType "CHANGELOG-config"
   $content = $content.Replace("{{CONFIG_CHANGELOG_URL}}", $configChangelogUrl)
 
   $extraContent = @"
