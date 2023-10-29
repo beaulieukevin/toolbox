@@ -1,3 +1,7 @@
+# 1.0.3 (October 29, 2023)
+
+* Update icon of Toolbox
+
 # 1.0.2 (October 29, 2023)
 
 * Update markdown files with new content and email updates
