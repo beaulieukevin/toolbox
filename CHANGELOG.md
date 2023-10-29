@@ -1,3 +1,7 @@
+# 1.0.2 (October 29, 2023)
+
+* Update markdown files with new content and email updates
+
 # 1.0.1 (October 29, 2023)
 
 * Update extension of AUTHORS file
