@@ -3,4 +3,4 @@ local/
 
 # Ignoring company config file and its related changelog file
 config.json
-CHANGELOG-config.json
+CHANGELOG-config.md
