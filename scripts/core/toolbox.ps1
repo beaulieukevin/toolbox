@@ -1,4 +1,17 @@
+$toolboxRootResolved = Resolve-Path -Path "$PSScriptRoot\..\.." -ErrorAction Stop
+$toolboxRootPath = $toolboxRootResolved.Path
+[System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $toolboxRootPath, "Process")
+[System.Environment]::SetEnvironmentVariable("TOOLBOX_APPS", "$toolboxRootPath\local\apps", "Process")
+
 ."$Env:TOOLBOX_HOME\scripts\apis\apis-module.ps1"
+
+$appConfig = Get-AppConfig
+foreach ($environmentVariableName in $appConfig.environmentVariables.PSObject.Properties.Name) {
+	if (($environmentVariableName -ne "APPS") -and ($environmentVariableName -ne "HOME")) {
+		$environmentVariableValue = $appConfig.environmentVariables.$environmentVariableName
+		[System.Environment]::SetEnvironmentVariable("TOOLBOX_$environmentVariableName", $environmentVariableValue, "Process")
+	}
+}
 
 try {
 	Reset-ToolboxLocalRepository

@@ -130,30 +130,5 @@ if ($oldAppConfig.toolbox.autoUpdate -ne $newAppConfig.toolbox.autoUpdate) {
     }
 }
 
-if (($oldAppConfig.environmentVariables | ConvertTo-Json -Compress) -ne ($newAppConfig.environmentVariables | ConvertTo-Json -Compress)) {
-    Write-Host "Updating Toolbox CLI environment variables"
-    $toolboxVariables = Get-ChildItem Env:TOOLBOX_*
-    foreach ($toolboxVariable in $toolboxVariables) {
-        if (($toolboxVariable.Name -ne "TOOLBOX_APPS") -and ($toolboxVariable.Name -ne "TOOLBOX_HOME")) {
-            [System.Environment]::SetEnvironmentVariable($toolboxVariable.Name, "", "Process")
-            [System.Environment]::SetEnvironmentVariable($toolboxVariable.Name, "", "User")
-        }
-    }
-
-    $newAppConfig = Get-AppConfig
-    foreach ($environmentVariableName in $newAppConfig.environmentVariables.PSObject.Properties.Name) {
-        if (($environmentVariableName -ne "APPS") -and ($environmentVariableName -ne "HOME")) {
-            $environmentVariableValue = $newAppConfig.environmentVariables.$environmentVariableName
-            [System.Environment]::SetEnvironmentVariable("TOOLBOX_$environmentVariableName", $environmentVariableValue, "Process")
-            [System.Environment]::SetEnvironmentVariable("TOOLBOX_$environmentVariableName", $environmentVariableValue, "User")
-        }
-        else {
-            Write-Host "Cannot update protected TOOLBOX_APPS or TOOLBOX_HOME environment variables"
-        }
-        
-        Write-Host "Toolbox CLI environment variables have been updated"
-    }
-}
-
 Send-ReleaseNotesMailMessage -ReleaseContent $releaseContent
 

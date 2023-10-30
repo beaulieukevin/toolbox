@@ -1,7 +1,7 @@
 $toolboxRootResolved = Resolve-Path -Path "$PSScriptRoot\..\.." -ErrorAction Stop
 $toolboxRootPath = $toolboxRootResolved.Path
 [System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $toolboxRootPath, "Process")
-[System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $toolboxRootPath, "User")
+[System.Environment]::SetEnvironmentVariable("TOOLBOX_APPS", "$toolboxRootPath\local\apps", "Process")
 
 ."$Env:TOOLBOX_HOME\scripts\apis\apis-module.ps1"
 ."$Env:TOOLBOX_HOME\scripts\core\analytics-module.ps1"
@@ -86,34 +86,6 @@ function Start-InitToolboxEnvironmentVariables {
     [System.Environment]::SetEnvironmentVariable("PATH", $newPath, "Process")
     [System.Environment]::SetEnvironmentVariable("PATH", $newPath, "User")
     Write-Host "PATH environment variable has been updated"
-
-    Write-Host "Updating TOOLBOX_APPS environment variable"
-    [System.Environment]::SetEnvironmentVariable("TOOLBOX_APPS", "$toolboxRootPath\local\apps", "Process")
-    [System.Environment]::SetEnvironmentVariable("TOOLBOX_APPS", "$toolboxRootPath\local\apps", "User")
-    Write-Host "TOOLBOX_APPS environment variable has been updated"
-
-    Write-Host "Updating Toolbox CLI environment variables"
-    $toolboxVariables = Get-ChildItem Env:TOOLBOX_*
-    foreach ($toolboxVariable in $toolboxVariables) {
-        if (($toolboxVariable.Name -ne "TOOLBOX_APPS") -and ($toolboxVariable.Name -ne "TOOLBOX_HOME")) {
-            [System.Environment]::SetEnvironmentVariable($toolboxVariable.Name, "", "Process")
-            [System.Environment]::SetEnvironmentVariable($toolboxVariable.Name, "", "User")
-        }
-    }
-
-    $appConfig = Get-AppConfig
-    foreach ($environmentVariableName in $appConfig.environmentVariables.PSObject.Properties.Name) {
-        if (($environmentVariableName -ne "APPS") -and ($environmentVariableName -ne "HOME")) {
-            $environmentVariableValue = $appConfig.environmentVariables.$environmentVariableName
-            [System.Environment]::SetEnvironmentVariable("TOOLBOX_$environmentVariableName", $environmentVariableValue, "Process")
-            [System.Environment]::SetEnvironmentVariable("TOOLBOX_$environmentVariableName", $environmentVariableValue, "User")
-        }
-        else {
-            Write-Host "Cannot update protected TOOLBOX_APPS or TOOLBOX_HOME environment variables"
-        }
-        
-        Write-Host "Toolbox CLI environment variables have been updated"
-    }
 }
 
 function Start-AutoUpdateSetup {
