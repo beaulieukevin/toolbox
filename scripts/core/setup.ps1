@@ -3,7 +3,7 @@ $toolboxRootPath = $toolboxRootResolved.Path
 [System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $toolboxRootPath, "Process")
 [System.Environment]::SetEnvironmentVariable("TOOLBOX_APPS", "$toolboxRootPath\local\apps", "Process")
 
-."$Env:TOOLBOX_HOME\scripts\apis\apis-module.ps1"
+."$Env:TOOLBOX_HOME\scripts\shared\common-module.ps1"
 ."$Env:TOOLBOX_HOME\scripts\core\analytics-module.ps1"
 ."$Env:TOOLBOX_HOME\scripts\core\git-module.ps1"
 ."$Env:TOOLBOX_HOME\scripts\core\proxy-module.ps1"
