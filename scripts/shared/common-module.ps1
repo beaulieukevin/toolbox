@@ -62,6 +62,11 @@ function Get-AppConfig {
     return Get-Content -Path "$Env:TOOLBOX_HOME\config.json" -ErrorAction Stop | ConvertFrom-JSON
 }
 
+function Get-CompanyDocsUrl {
+    $appConfig = Get-AppConfig
+    return $appConfig.toolbox.docsUrl
+}
+
 function Get-ToolboxVersion {
     $toolbox = Get-Content -Path "$Env:TOOLBOX_HOME\toolbox.json" -ErrorAction Stop | ConvertFrom-JSON
     return $toolbox.version

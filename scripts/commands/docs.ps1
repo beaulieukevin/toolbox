@@ -1,10 +1,9 @@
-$appConfig = Get-AppConfig
-$docsUrl = $appConfig.toolbox.docsUrl
+$docsUrl = Get-CompanyDocsUrl
     
-if ($docsUrl) {
-    Write-Host "Opening $docsUrl in your default browser."
-    Start-Process "$docsUrl"
+if (!$docsUrl) {
+    Write-Host "There is no documentation available."
     return
 }
 
-Write-Host "There is no documentation available."
+Write-Host "Opening $docsUrl in your default browser."
+Start-Process $docsUrl
