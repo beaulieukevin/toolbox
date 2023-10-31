@@ -81,11 +81,6 @@ function Get-ToolboxAnalytics {
     return $companyConfig.analytics
 }
 
-function Get-CompanyProxyConfig {
-    $companyConfig = Get-CompanyConfig
-    return $companyConfig.proxy
-}
-
 function Get-CompanyEnvironmentVariables {
     $companyConfig = Get-CompanyConfig
     return $companyConfig.environmentVariables
