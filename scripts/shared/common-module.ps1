@@ -62,6 +62,15 @@ function Get-AppConfig {
     return Get-Content -Path "$Env:TOOLBOX_HOME\config.json" -ErrorAction Stop | ConvertFrom-JSON
 }
 
+function Get-CompanyConfig {
+    return Get-Content -Path "$Env:TOOLBOX_HOME\config.json" -ErrorAction Stop | ConvertFrom-JSON
+}
+
+function Get-CompanyEnvironmentVariables {
+    $companyConfig = Get-CompanyConfig
+    return $companyConfig.environmentVariables
+}
+
 function Get-CompanyDocsUrl {
     $appConfig = Get-AppConfig
     return $appConfig.toolbox.docsUrl
@@ -94,7 +103,7 @@ function Set-UserConfig($Config) {
     $Config | ConvertTo-JSON | Set-Content "$Env:TOOLBOX_HOME\local\config.json" -ErrorAction Stop
 }
 
-function Send-Analytics($Command, $Options, $ScriptError) {
+function Send-ToolboxAnalytics($Command, $Arguments, $ScriptError) {
     try {
         $appConfig = Get-AppConfig
         $analytics = $appConfig.analytics
@@ -125,7 +134,7 @@ function Send-Analytics($Command, $Options, $ScriptError) {
                 "userName"       = $userName;
                 "toolboxVersion" = $version;
                 "command"        = $Command;
-                "options"        = [string]$Options;
+                "arguments"      = [string]$Arguments;
                 "errorMessage"   = $errorMessage;
                 "stackTrace"     = $errorStackTrace;
             }
@@ -137,7 +146,7 @@ function Send-Analytics($Command, $Options, $ScriptError) {
                 "userName"       = $userName;
                 "toolboxVersion" = $version;
                 "command"        = $Command;
-                "options"        = [string]$Options;
+                "arguments"      = [string]$Arguments;
             }
         }
         
@@ -201,7 +210,27 @@ function Get-CliCommand($Arguments) {
     return ""
 }
 
+function Get-FirtArgument($Arguments) {
+    if ($Arguments) {
+        $argumentsArray = $Arguments.Split(" ")
+        $command, $options = $argumentsArray
+        return $command
+    }
+
+    return ""
+}
+
 function Get-CliOptions($Arguments) {
+    if ($Arguments) {
+        $argumentsArray = $Arguments.Split(" ")
+        $command, $options = $argumentsArray
+        return $options
+    }
+
+    return @()
+}
+
+function Get-RemainingArguments($Arguments) {
     if ($Arguments) {
         $argumentsArray = $Arguments.Split(" ")
         $command, $options = $argumentsArray
