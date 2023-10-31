@@ -5,8 +5,7 @@ param(
 
 ."$Env:TOOLBOX_HOME\scripts\core\analytics-module.ps1"
 
-$appConfig = Get-AppConfig
-$analytics = $appConfig.analytics
+$analytics = Get-ToolboxAnalytics
 
 if (!$analytics) {
     Write-Host "Analytics have not been activated by your organization."
@@ -16,17 +15,15 @@ if (!$analytics) {
 $validOptions = @("on", "off", "status")
 
 if (!$Options) {
-    Write-Host "A valid argument must be provided. Only '$validOptions' can be used."
-    Write-Host ""
+    Write-Host "A valid argument must be provided. Only '$($validOptions -join (', '))' can be used.`n" -ForegroundColor Yellow
     Write-Help
     return
 }
 
-$selectionMode = Get-CliCommand $Options
+$selectionMode = Get-FirtArgument $Options
     
-if (!($validOptions -ccontains $selectionMode)) {
-    Write-Host "A valid argument must be provided. Only '$validOptions' can be used."
-    Write-Host ""
+if ($selectionMode -notin $validOptions) {
+    Write-Host "A valid argument must be provided. Only '$($validOptions -join (', '))' can be used.`n" -ForegroundColor Yellow
     Write-Help
     return
 }
