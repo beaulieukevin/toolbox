@@ -1,33 +1,28 @@
 function Write-InstalledPlans {
     Write-Task "Plans installed locally"
 
-    $downloadedPlanDirs = Get-ChildItem "$Env:TOOLBOX_HOME\local\plans" -ErrorAction SilentlyContinue
+    $localPlans = Get-ChildItem $Env:TOOLBOX_PLANS -ErrorAction SilentlyContinue
 
-    if ($downloadedPlanDirs.Count -eq 0) {
+    if (!$localPlans) {
         Write-Host "No plan has been installed."
         return
     }
 
-    $appConfig = Get-AppConfig
-    $supportEmail = $appConfig.organization.supportEmail
-
-    foreach ($downloadedPlanDir in $downloadedPlanDirs) {
-        $planName = $downloadedPlanDir.Name
-        if (Test-Path "$Env:TOOLBOX_HOME\local\plans\$planName\plan.json") {
-            $planConfig = Get-Content -Path "$Env:TOOLBOX_HOME\local\plans\$planName\plan.json" -ErrorAction Stop | ConvertFrom-Json
-            $planVersion = $planConfig.version
-            $plans = $appConfig.plans
-            $gitRepository = $plans.$planName.gitRepository
+    foreach ($localPlan in $localPlans) {
+        $planName = $localPlan.Name
+        if (Test-PlanConfig -PlanName $planName) {
+            $planVersion = Get-PlanVersion -PlanName $planName
+            $gitRepository = Get-PlanGitRepository -PlanName $planName
             if (!$gitRepository) {
-                Write-Host "$planName@$planVersion > The plan is no longer part of Toolbox. Uninstall it by using: toolbox uninstall $planName" -ForegroundColor Yellow
+                Write-Host "$planName@$planVersion > The plan is no longer part of Toolbox. Uninstall it using: toolbox uninstall $planName" -ForegroundColor Yellow
             }
             else {
                 $readmeUrl = Get-MarkdownFileUrlFromRepository -GitRepository $gitRepository -MarkdownType "README"
-                Write-Host "$planName@$planVersion > More info: $readmeUrl"
+                Write-Host "$planName@$planVersion > More info: $readmeUrl" -ForegroundColor Green
             }
         }
         else {
-            Write-Host "$planName > The plan is corrupted. Contact $supportEmail for support." -ForegroundColor Red
+            Write-Host "$planName > The plan is corrupted." -ForegroundColor Red
         }
     }
 }
@@ -35,21 +30,19 @@ function Write-InstalledPlans {
 function Write-RemotePlans {
     Write-Task "Plans available remotely for installation"
 
-    $appConfig = Get-AppConfig
-    $plansAvailableRemotely = 0
+    $companyPlans = Get-CompanyPlans
+    $plansNotInstalled = 0
 
-    foreach ($planName in $appConfig.plans.PSObject.Properties.Name) {
-        if (!(Test-Path "$Env:TOOLBOX_HOME\local\plans\$planName")) {
-            $plans = $appConfig.plans
-            $gitRepository = $plans.$planName.gitRepository
-            $plansAvailableRemotely++
-
+    foreach ($planName in $companyPlans.PSObject.Properties.Name) {
+        if (!(Test-PlanConfig -PlanName $planName)) {
+            $gitRepository = Get-PlanGitRepository -PlanName $planName
             $readmeUrl = Get-MarkdownFileUrlFromRepository -GitRepository $gitRepository -MarkdownType "README"
             Write-Host "$planName > More info: $readmeUrl"
+            $plansNotInstalled++
         }
     }
 
-    if ($plansAvailableRemotely -eq 0) {
+    if (!$plansNotInstalled) {
         Write-Host "No other plan is available for installation."
     }
 }

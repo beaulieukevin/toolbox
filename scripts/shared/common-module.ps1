@@ -72,8 +72,31 @@ function Get-CompanyEnvironmentVariables {
 }
 
 function Get-CompanyDocsUrl {
-    $appConfig = Get-AppConfig
-    return $appConfig.toolbox.docsUrl
+    $companyConfig = Get-CompanyConfig
+    return $companyConfig.toolbox.docsUrl
+}
+
+function Get-CompanyPlans {
+    $companyConfig = Get-CompanyConfig
+    return $companyConfig.plans
+}
+
+function Get-PlanConfig($PlanName) {
+    return Get-Content -Path "$Env:TOOLBOX_HOME\local\plans\$PlanName\plan.json" -ErrorAction Stop | ConvertFrom-Json
+}
+
+function Get-PlanVersion($PlanName) {
+    $planConfig = Get-PlanConfig -PlanName $planName
+    return $planConfig.version
+}
+
+function Get-PlanGitRepository($PlanName) {
+    $companyPlans = Get-CompanyPlans
+    return $companyPlans.$PlanName.gitRepository
+}
+
+function Test-PlanConfig($PlanName) {
+    return Test-Path "$Env:TOOLBOX_HOME\local\plans\$PlanName\plan.json"
 }
 
 function Get-ToolboxVersion {
