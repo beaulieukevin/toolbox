@@ -1,6 +1,6 @@
 param(
     [Parameter(Position = 0)]
-    [array]$Options
+    [array]$Arguments
 )
 
 ."$Env:TOOLBOX_HOME\scripts\core\analytics-module.ps1"
@@ -12,18 +12,18 @@ if (!$analytics) {
     return
 }
 
-$validOptions = @("on", "off", "status")
+$validArguments = @("on", "off", "status")
 
-if (!$Options) {
-    Write-Host "A valid argument must be provided. Only '$($validOptions -join (', '))' can be used.`n" -ForegroundColor Yellow
+if (!$Arguments) {
+    Write-Host "A valid argument must be provided. Only '$($validArguments -join (', '))' can be used.`n" -ForegroundColor Yellow
     Write-Help
     return
 }
 
-$selectionMode = Get-FirtArgument $Options
+$selectionMode = Get-FirtArgument $Arguments
     
-if ($selectionMode -notin $validOptions) {
-    Write-Host "A valid argument must be provided. Only '$($validOptions -join (', '))' can be used.`n" -ForegroundColor Yellow
+if ($selectionMode -notin $validArguments) {
+    Write-Host "A valid argument must be provided. Only '$($validArguments -join (', '))' can be used.`n" -ForegroundColor Yellow
     Write-Help
     return
 }

@@ -1,6 +1,6 @@
 param(
     [Parameter(Position = 0)]
-    [array]$Options
+    [array]$Arguments
 )
 
 function Remove-Link($PlanName) {
@@ -72,14 +72,13 @@ function Remove-Plan($PlanName) {
     Write-Host "Successfully removed '$PlanName' plan from Toolbox."
 }
 
-if (!$Options) {
-    Write-Host "You must provide a plan name to uninstall."
-    Write-Host ""
+if (!$Arguments) {
+    Write-Host "You must provide a plan name to uninstall.`n"
     Write-Help
     return
 }
 
-$planName = Get-CliCommand $Options
+$planName = Get-FirtArgument $Arguments
     
 if (!(Test-Path -Path "$Env:TOOLBOX_HOME\local\plans\$planName\plan.json")) {
     Write-Host "The plan '$planName' is not downloaded via Toolbox."
