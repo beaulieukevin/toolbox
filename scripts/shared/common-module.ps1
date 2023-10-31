@@ -71,6 +71,16 @@ function Get-CompanyEmailDomain {
     return $companyConfig.organization.emailDomain
 }
 
+function Get-CompanyName {
+    $companyConfig = Get-CompanyConfig
+    return $companyConfig.organization.name
+}
+
+function Get-ToolboxAnalytics {
+    $companyConfig = Get-CompanyConfig
+    return $companyConfig.analytics
+}
+
 function Get-CompanyProxyConfig {
     $companyConfig = Get-CompanyConfig
     return $companyConfig.proxy

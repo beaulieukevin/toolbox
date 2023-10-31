@@ -32,12 +32,12 @@ if (!($validOptions -ccontains $selectionMode)) {
 }
 
 if ($selectionMode -ceq "on") {
-    Show-AnalyticsConsentQuestion -InlineIsAnonymous $true
+    Set-AnalyticsConsent -NoPrompt
     return
 }
 
 if ($selectionMode -ceq "off") {
-    Show-AnalyticsConsentQuestion
+    Set-AnalyticsConsent
     return
 }
 

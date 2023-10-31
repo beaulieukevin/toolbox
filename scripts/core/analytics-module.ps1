@@ -1,19 +1,21 @@
 function Initialize-Analytics {
-    $appConfig = Get-AppConfig
-    $analytics = $appConfig.analytics
+    $analytics = Get-ToolboxAnalytics
 
     if (!$analytics) {
         return
     }
 
-    Show-AnalyticsConsentQuestion
+    Set-AnalyticsConsent
 }
 
-function Show-AnalyticsConsentQuestion($InlineIsAnonymous) {
-    $appConfig = Get-AppConfig
-    $organizationName = $appConfig.organization.name
+function Set-AnalyticsConsent {
+    param(
+        [switch]$Consent,
+        [switch]$NoPrompt
+    )
+    $organizationName = Get-CompanyName
 
-    if ($null -eq $InlineIsAnonymous) {
+    if (!$NoPrompt) {
         Write-Task "$organizationName has activated analytics on Toolbox. Please read the terms and conditions below:"
         Write-HostAsBot "In order to improve $organizationName's developer experience,"
         Write-HostAsBot "we will capture your usage of Toolbox through analytics."
@@ -43,7 +45,12 @@ function Show-AnalyticsConsentQuestion($InlineIsAnonymous) {
         }
     }
     else {
-        $isAnonymized = $InlineIsAnonymous
+        if ($Consent) {
+            $isAnonymized = $false
+        }
+        else {
+            $isAnonymized = $true
+        }
     }
 
     $userConfig = Get-UserConfig
