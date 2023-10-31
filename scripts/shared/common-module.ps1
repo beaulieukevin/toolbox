@@ -105,6 +105,21 @@ function Get-PlanConfig($PlanName) {
     return Get-Content -Path "$Env:TOOLBOX_HOME\local\plans\$PlanName\plan.json" -ErrorAction Stop | ConvertFrom-Json
 }
 
+function Get-PlanPackageFolder($PlanName) {
+    $planConfig = Get-PlanConfig -PlanName $PlanName
+    return $planConfig.package.folder
+}
+
+function Get-PlanPackageShortcutName($PlanName) {
+    $planConfig = Get-PlanConfig -PlanName $PlanName
+    return $planConfig.package.shortcutName
+}
+
+function Get-PlanCli($PlanName) {
+    $planConfig = Get-PlanConfig -PlanName $PlanName
+    return $planConfig.cli
+}
+
 function Get-PlanVersion($PlanName) {
     $planConfig = Get-PlanConfig -PlanName $planName
     return $planConfig.version
@@ -116,7 +131,7 @@ function Get-PlanGitRepository($PlanName) {
 }
 
 function Test-PlanConfig($PlanName) {
-    return Test-Path "$Env:TOOLBOX_HOME\local\plans\$PlanName\plan.json"
+    return Test-Path "$Env:TOOLBOX_PLANS\$PlanName\plan.json"
 }
 
 function Get-ToolboxAutoUpdateConfig {

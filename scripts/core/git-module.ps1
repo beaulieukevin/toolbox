@@ -129,15 +129,15 @@ function Initialize-ToolboxRepository {
     Write-Task "Syncing Toolbox with defined Source Control Management (SCM)"
 
     Write-Host "Initializing local repository"
-    Start-Git @("-C", "$Env:TOOLBOX_HOME", "init", "--quiet")
+    Start-Git @("-C", $Env:TOOLBOX_HOME, "init", "--quiet")
 
     Write-Host "Updating remote repository with $gitRepository"
-    Start-Git @("-C", "$Env:TOOLBOX_HOME", "remote", "add", "origin", $gitRepository)
+    Start-Git @("-C", $Env:TOOLBOX_HOME, "remote", "add", "origin", $gitRepository)
  
     Write-Host "Fetching remote repository. It might take few minutes."
     Write-CliWarning "A Git logon screen might appear. If it is the case, please authenticate using your credentials."
 
-    Start-Git @("-C", "$Env:TOOLBOX_HOME", "fetch", "origin", "--quiet")
-    Start-Git @("-C", "$Env:TOOLBOX_HOME", "reset", "--hard", "origin/$defaultBranch", "--quiet")
-    Start-Git @("-C", "$Env:TOOLBOX_HOME", "branch", "--set-upstream-to=origin/$defaultBranch", "main", "--quiet")
+    Start-Git @("-C", $Env:TOOLBOX_HOME, "fetch", "origin", "--quiet")
+    Start-Git @("-C", $Env:TOOLBOX_HOME, "reset", "--hard", "origin/$defaultBranch", "--quiet")
+    Start-Git @("-C", $Env:TOOLBOX_HOME, "branch", "--set-upstream-to=origin/$defaultBranch", "main", "--quiet")
 }

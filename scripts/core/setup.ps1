@@ -45,11 +45,11 @@ function Set-ToolboxDefaultLocalDirectories {
     Write-Task "Creating local directories"
 
     Write-Host "Creating \bin directory"
-    New-Item -ItemType Directory -Path "$Env:TOOLBOX_BIN" -ErrorAction SilentlyContinue | Out-Null
+    New-Item -ItemType Directory -Path $Env:TOOLBOX_BIN -ErrorAction SilentlyContinue | Out-Null
     Write-Host "Creating \apps directory"
-    New-Item -ItemType Directory -Path "$Env:TOOLBOX_APPS" -ErrorAction SilentlyContinue | Out-Null
+    New-Item -ItemType Directory -Path $Env:TOOLBOX_APPS -ErrorAction SilentlyContinue | Out-Null
     Write-Host "Creating \plans directory"
-    New-Item -ItemType Directory -Path "$Env:TOOLBOX_PLANS" -ErrorAction SilentlyContinue | Out-Null
+    New-Item -ItemType Directory -Path $Env:TOOLBOX_PLANS -ErrorAction SilentlyContinue | Out-Null
 }
 
 function Set-ToolboxEnvironmentVariables {
