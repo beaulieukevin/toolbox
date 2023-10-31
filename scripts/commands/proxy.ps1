@@ -5,8 +5,7 @@ param(
 
 ."$Env:TOOLBOX_HOME\scripts\core\proxy-module.ps1"
 
-$appConfig = Get-AppConfig
-$proxy = $appConfig.proxy
+$proxy = Get-CompanyProxyConfig
 
 if (!$proxy) {
     Write-Host "Local proxy has not been activated by your organization."
@@ -16,17 +15,15 @@ if (!$proxy) {
 $validOptions = @("on", "off", "status")
 
 if (!$Options) {
-    Write-Host "A valid argument must be provided. Only '$validOptions' can be used."
-    Write-Host ""
+    Write-Host "A valid argument must be provided. Only '$($validOptions -join (', '))' can be used.`n" -ForegroundColor Yellow
     Write-Help
     return
 }
 
-$selectionMode = Get-CliCommand $Options
+$selectionMode = Get-FirtArgument $Options
     
-if (!($validOptions -ccontains $selectionMode)) {
-    Write-Host "A valid argument must be provided. Only '$validOptions' can be used."
-    Write-Host ""
+if ($selectionMode -notin $validOptions) {
+    Write-Host "A valid argument must be provided. Only '$($validOptions -join (', '))' can be used.`n" -ForegroundColor Yellow
     Write-Help
     return
 }
@@ -50,7 +47,7 @@ if ($selectionMode -ceq "off") {
 
 if ($selectionMode -ceq "status") {
     $proxyProcessesCount = Get-ProxyProcesses
-    if ($proxyProcessesCount -eq 0) {
+    if (!$proxyProcessesCount) {
         Write-Host "Your local proxy is not running."
     }
     else {
