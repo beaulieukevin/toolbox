@@ -1,6 +1,6 @@
 param(
     [Parameter(Position = 0)]
-    [array]$Options
+    [array]$Arguments
 )
 
 function Add-Link($PlanName) {
@@ -61,16 +61,16 @@ function Add-Cli($PlanName) {
     }
 }
 
-function Install-Plan($Options) {
-    if (!$Options) {
+function Install-Plan($Arguments) {
+    if (!$Arguments) {
         Write-Host "A plan name must be provided."
         Write-Host ""
         Write-Help
         return
     }
 
-    $planName = Get-CliCommand $Options
-    $otherOptions = Get-CliOptions $Options
+    $planName = Get-FirtArgument -Arguments $Arguments
+    $otherOptions = Get-RemainingArguments -Arguments $Arguments
 
     $appConfig = Get-AppConfig
     $plans = $appConfig.plans
@@ -115,4 +115,4 @@ function Install-Plan($Options) {
     Add-Cli -PlanName $planName
 }
 
-Install-Plan $Options
+Install-Plan $Arguments

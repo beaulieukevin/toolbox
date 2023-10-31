@@ -14,15 +14,18 @@ function Write-InstalledPlans {
             $planVersion = Get-PlanVersion -PlanName $planName
             $gitRepository = Get-PlanGitRepository -PlanName $planName
             if (!$gitRepository) {
-                Write-Host "$planName@$planVersion > The plan is no longer part of Toolbox. Uninstall it using: toolbox uninstall $planName" -ForegroundColor Yellow
+                Write-Host "$planName@$planVersion" -ForegroundColor Yellow
+                Write-Host "  The plan is no longer supported. Uninstall it using: toolbox uninstall $planName"
             }
             else {
                 $readmeUrl = Get-MarkdownFileUrlFromRepository -GitRepository $gitRepository -MarkdownType "README"
-                Write-Host "$planName@$planVersion > More info: $readmeUrl" -ForegroundColor Green
+                Write-Host "$planName@$planVersion" -ForegroundColor Green
+                Write-Host "  More info: $readmeUrl"
             }
         }
         else {
-            Write-Host "$planName > The plan is corrupted." -ForegroundColor Red
+            Write-Host $planName -ForegroundColor Red
+            Write-Host "  The plan is corrupted."
         }
     }
 }
@@ -37,7 +40,8 @@ function Write-RemotePlans {
         if (!(Test-PlanConfig -PlanName $planName)) {
             $gitRepository = Get-PlanGitRepository -PlanName $planName
             $readmeUrl = Get-MarkdownFileUrlFromRepository -GitRepository $gitRepository -MarkdownType "README"
-            Write-Host "$planName > More info: $readmeUrl"
+            Write-Host $planName -ForegroundColor Blue
+            Write-Host "  More info: $readmeUrl"
             $plansNotInstalled++
         }
     }

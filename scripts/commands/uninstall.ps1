@@ -16,7 +16,6 @@ function Remove-Tool($PlanName) {
     
     Write-Host "Removing '$PlanName' tool from Toolbox..."
     Remove-Directory -Path "$Env:TOOLBOX_APPS\$folderName"
-    Write-Host "Successfully removed '$PlanName' tool from Toolbox."
 }
 
 function Remove-Link($PlanName) {
@@ -32,7 +31,6 @@ function Remove-Link($PlanName) {
     
     Write-Host "Removing '$PlanName' shortcut from your desktop..."
     Remove-Shortcut -ShortcutName $shortcutName
-    Write-Host "Successfully removed '$PlanName' shortcut from your desktop."
 }
 
 function Remove-Cli($PlanName) {
@@ -48,7 +46,6 @@ function Remove-Cli($PlanName) {
     
     Write-Host "Removing '$cliName' CLI from Toolbox..."
     Remove-Item -Path "$Env:TOOLBOX_BIN\$cliName.bat" -ErrorAction SilentlyContinue | Out-Null
-    Write-Host "Successfully removed '$cliName' CLI from Toolbox."
 }
 
 function Remove-Plan($PlanName) {
@@ -58,7 +55,6 @@ function Remove-Plan($PlanName) {
 
     Write-Host "Removing '$PlanName' plan from Toolbox..."
     Remove-Directory -Path "$Env:TOOLBOX_PLANS\$PlanName"
-    Write-Host "Successfully removed '$PlanName' plan from Toolbox."
 }
 
 if (!$Arguments) {

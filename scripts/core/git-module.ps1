@@ -135,7 +135,7 @@ function Initialize-ToolboxRepository {
     Start-Git @("-C", $Env:TOOLBOX_HOME, "remote", "add", "origin", $gitRepository)
  
     Write-Host "Fetching remote repository. It might take few minutes."
-    Write-CliWarning "A Git logon screen might appear. If it is the case, please authenticate using your credentials."
+    Write-Host "A Git logon screen might appear. If it is the case, please authenticate using your credentials." -ForegroundColor Yellow
 
     Start-Git @("-C", $Env:TOOLBOX_HOME, "fetch", "origin", "--quiet")
     Start-Git @("-C", $Env:TOOLBOX_HOME, "reset", "--hard", "origin/$defaultBranch", "--quiet")
