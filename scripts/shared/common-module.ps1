@@ -66,6 +66,11 @@ function Get-CompanyConfig {
     return Get-Content -Path "$Env:TOOLBOX_HOME\config.json" -ErrorAction Stop | ConvertFrom-JSON
 }
 
+function Get-CompanyProxyConfig {
+    $companyConfig = Get-CompanyConfig
+    return $companyConfig.proxy
+}
+
 function Get-CompanyEnvironmentVariables {
     $companyConfig = Get-CompanyConfig
     return $companyConfig.environmentVariables
@@ -97,6 +102,11 @@ function Get-PlanGitRepository($PlanName) {
 
 function Test-PlanConfig($PlanName) {
     return Test-Path "$Env:TOOLBOX_HOME\local\plans\$PlanName\plan.json"
+}
+
+function Get-ToolboxAutoUpdateConfig {
+    $companyConfig = Get-CompanyConfig
+    return $companyConfig.toolbox.autoUpdate
 }
 
 function Get-ToolboxVersion {
@@ -365,17 +375,23 @@ function Start-Git($Params) {
     & "$Env:TOOLBOX_HOME\local\git\cmd\git.exe" $Params
 }
 
-function Unregister-ToolboxCLIAutoUpdate {
-    $taskName = "ToolboxCLIAutoUpdateDaily"
+function Unregister-ToolboxAutoUpdate {
+    Write-Task "Unregistering Toolbox auto update triggers"
+
+    Write-Host "Unregistering daily scheduled task"
+    $taskName = "ToolboxAutoUpdateDaily"
     Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
 
-    $taskName = "ToolboxCLIAutoUpdateAtLogon"
+    Write-Host "Unregistering logon scheduled task"
+    $taskName = "ToolboxAutoUpdateAtLogon"
     Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
 
     Remove-Item -Path "$Env:TOOLBOX_HOME\local\autoupdate.bat" -ErrorAction SilentlyContinue | Out-Null
 }
 
-function Register-ToolboxCLIAutoUpdate {
+function Register-ToolboxAutoUpdate {
+    Write-Task "Registering Toolbox auto update triggers"
+
     New-Item -Path "$Env:TOOLBOX_HOME\local" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
     New-Item -Path "$Env:TOOLBOX_HOME\local\autoupdate.bat" -ItemType File -Force -ErrorAction Stop | Out-Null
     Add-Content -Path "$Env:TOOLBOX_HOME\local\autoupdate.bat" -Value "@echo OFF"
@@ -388,13 +404,15 @@ function Register-ToolboxCLIAutoUpdate {
     $argument = "/C call $Env:TOOLBOX_HOME\local\autoupdate.bat"
     $action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument $argument
     
-    $taskName = "ToolboxCLIAutoUpdateDaily"
+    Write-Host "Registering daily scheduled task"
+    $taskName = "ToolboxAutoUpdateDaily"
     $trigger = New-ScheduledTaskTrigger -Daily -At "12pm"
-    Register-ScheduledTask -Action $action -Trigger $trigger -TaskPath "\ToolboxCLI\AutoUpdate" -TaskName $taskName -Description "Start Toolbox CLI auto update" -ErrorAction SilentlyContinue | Out-Null
+    Register-ScheduledTask -Action $action -Trigger $trigger -TaskPath "\Toolbox\AutoUpdate" -TaskName $taskName -Description "Start Toolbox auto update" -ErrorAction SilentlyContinue | Out-Null
 
-    $taskName = "ToolboxCLIAutoUpdateAtLogon"
+    Write-Host "Registering logon scheduled task"
+    $taskName = "ToolboxAutoUpdateAtLogon"
     $trigger = New-ScheduledTaskTrigger -AtLogon
-    Register-ScheduledTask -Action $action -Trigger $trigger -TaskPath "\ToolboxCLI\AutoUpdate" -TaskName $taskName -Description "Start Toolbox CLI auto update" -ErrorAction SilentlyContinue | Out-Null
+    Register-ScheduledTask -Action $action -Trigger $trigger -TaskPath "\Toolbox\AutoUpdate" -TaskName $taskName -Description "Start Toolbox auto update" -ErrorAction SilentlyContinue | Out-Null
 }
 
 function Get-MarkdownFileUrlFromRepository($GitRepository, $MarkdownType) {

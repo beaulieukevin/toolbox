@@ -1,21 +1,22 @@
-$toolboxRootResolved = Resolve-Path -Path "$PSScriptRoot\..\.." -ErrorAction Stop
-$toolboxRootPath = $toolboxRootResolved.Path
-[System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $toolboxRootPath, "Process")
-[System.Environment]::SetEnvironmentVariable("TOOLBOX_APPS", "$toolboxRootPath\local\apps", "Process")
+$rootPath = Resolve-Path -Path "$PSScriptRoot\..\.." -ErrorAction Stop
+[System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $($rootPath.Path), "Process")
+[System.Environment]::SetEnvironmentVariable("TOOLBOX_APPS", "$($rootPath.Path)\local\apps", "Process")
+[System.Environment]::SetEnvironmentVariable("TOOLBOX_PLANS", "$($rootPath.Path)\local\plans", "Process")
+[System.Environment]::SetEnvironmentVariable("TOOLBOX_BIN", "$($rootPath.Path)\local\bin", "Process")
 
 ."$Env:TOOLBOX_HOME\scripts\shared\common-module.ps1"
-."$Env:TOOLBOX_HOME\scripts\core\analytics-module.ps1"
-."$Env:TOOLBOX_HOME\scripts\core\git-module.ps1"
 ."$Env:TOOLBOX_HOME\scripts\core\proxy-module.ps1"
+."$Env:TOOLBOX_HOME\scripts\core\git-module.ps1"
+."$Env:TOOLBOX_HOME\scripts\core\analytics-module.ps1"
 
 function Set-Toolbox {
     Write-Host "#########################################################################" -ForegroundColor White
     Write-Host "                                Welcome!                                 " -ForegroundColor White
-    Write-Host "        Thank you for using Toolbox Command Line Interface (CLI).        " -ForegroundColor White
-    Write-Host " Before starting using the CLI, few configurations need to be performed. " -ForegroundColor White
+    Write-Host "                      Thank you for using Toolbox.                       " -ForegroundColor White
+    Write-Host "   Before starting using it, few configurations need to be performed.    " -ForegroundColor White
     Write-Host "                 We will guide you through this process.                 " -ForegroundColor White
-    Write-Host "#########################################################################" -ForegroundColor White
-    Write-Host ""
+    Write-Host "#########################################################################`n" -ForegroundColor White
+    
     Read-Host "Press ENTER to start configuration"
 
     Initialize-Toolbox
@@ -23,43 +24,38 @@ function Set-Toolbox {
     Initialize-Git
     Initialize-Analytics
 
-    Write-Host ""
     Write-Host "#########################################################################" -ForegroundColor White
-    Write-Host "               Congratulations! Toolbox CLI is configured.               " -ForegroundColor White
+    Write-Host "                 Congratulations! Toolbox is configured.                 " -ForegroundColor White
     Write-Host "     You can now run 'toolbox' and 'git' commands from your terminal.    " -ForegroundColor White
     Write-Host "      For more information on how to use Toolbox, use: toolbox help      " -ForegroundColor White
-    Write-Host "#########################################################################" -ForegroundColor White
-    Write-Host ""
+    Write-Host "#########################################################################`n" -ForegroundColor White
 
     Read-Host "Press ENTER to exit configuration"
 
-    exit 0
+    exit
 }
 
 function Initialize-Toolbox {
-    Start-InitDirectory
-    Start-InitToolboxEnvironmentVariables
-    Start-AutoUpdateSetup
+    Set-ToolboxDefaultLocalDirectories
+    Set-ToolboxEnvironmentVariables
+    Set-ToolboxAutoUpdate
 }
 
-function Start-InitDirectory {
+function Set-ToolboxDefaultLocalDirectories {
     Write-Task "Creating local directories"
 
-    Write-Host "Creating \local\bin directory"
-    New-Item -ItemType Directory -Path "$Env:TOOLBOX_HOME\local\bin" -ErrorAction SilentlyContinue | Out-Null
-    Write-Host "\local\bin directory created"
-    Write-Host "Creating \local\apps directory"
-    New-Item -ItemType Directory -Path "$Env:TOOLBOX_HOME\local\apps" -ErrorAction SilentlyContinue | Out-Null
-    Write-Host "\local\apps folder created"
-    Write-Host "Creating \local\plans directory"
-    New-Item -ItemType Directory -Path "$Env:TOOLBOX_HOME\local\plans" -ErrorAction SilentlyContinue | Out-Null
-    Write-Host "\local\plans folder created"
+    Write-Host "Creating \bin directory"
+    New-Item -ItemType Directory -Path "$Env:TOOLBOX_BIN" -ErrorAction SilentlyContinue | Out-Null
+    Write-Host "Creating \apps directory"
+    New-Item -ItemType Directory -Path "$Env:TOOLBOX_APPS" -ErrorAction SilentlyContinue | Out-Null
+    Write-Host "Creating \plans directory"
+    New-Item -ItemType Directory -Path "$Env:TOOLBOX_PLANS" -ErrorAction SilentlyContinue | Out-Null
 }
 
-function Start-InitToolboxEnvironmentVariables {
+function Set-ToolboxEnvironmentVariables {
     Write-Task "Setting Toolbox environment variables"
 
-    Write-Host "Updating PATH environment variable"
+    Write-Host "Preparing PATH environment variable"
     $path = [System.Environment]::GetEnvironmentVariable("PATH", "User")
     $newPath = "";
     
@@ -69,34 +65,32 @@ function Start-InitToolboxEnvironmentVariables {
 
     foreach ($pathValue in $pathValues) {
         if (Test-Path "$pathValue\toolbox.bat") {
-            $pathToDelete = $pathValue
-            $localPathToDelete = Resolve-Path -Path "$pathValue\..\local\bin" -ErrorAction Stop
+            $toolboxPathToDelete = $pathValue
+            $binPathToDelete = Resolve-Path -Path "$pathValue\..\local\bin" -ErrorAction SilentlyContinue
         }
     }
 
     foreach ($pathValue in $pathValues) {
-        if ($pathValue -and (Test-Path $pathValue) -and ($pathValue -ne $pathToDelete) -and ($pathValue -ne $localPathToDelete)) {
+        if ($pathValue -and (Test-Path $pathValue) -and ($pathValue -ne $toolboxPathToDelete) -and ($pathValue -ne $binPathToDelete)) {
             $newPath += $pathValue + ";"
         }
     }
 
+    Write-Host "Adding Toolbox \bin folders to PATH environment variable"
     $newPath += "$Env:TOOLBOX_HOME\bin;"
-    $newPath += "$Env:TOOLBOX_HOME\local\bin;"
+    $newPath += "$Env:TOOLBOX_BIN;"
 
     [System.Environment]::SetEnvironmentVariable("PATH", $newPath, "Process")
     [System.Environment]::SetEnvironmentVariable("PATH", $newPath, "User")
-    Write-Host "PATH environment variable has been updated"
 }
 
-function Start-AutoUpdateSetup {
-    Unregister-ToolboxCLIAutoUpdate
+function Set-ToolboxAutoUpdate {
+    Unregister-ToolboxAutoUpdate
 
-    $appConfig = Get-AppConfig
-    $toolboxAutoUpdate = $appConfig.toolbox.autoUpdate
+    $toolboxAutoUpdateConfig = Get-ToolboxAutoUpdateConfig
 
-    if (($null -ne $toolboxAutoUpdate) -and $toolboxAutoUpdate) {
-        Write-Task "Scheduling Toolbox CLI auto update"
-        Register-ToolboxCLIAutoUpdate
+    if (($null -ne $toolboxAutoUpdateConfig) -and $toolboxAutoUpdateConfig) {
+        Register-ToolboxAutoUpdate
     }
 }
 
