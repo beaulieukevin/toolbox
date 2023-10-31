@@ -66,6 +66,11 @@ function Get-CompanyConfig {
     return Get-Content -Path "$Env:TOOLBOX_HOME\config.json" -ErrorAction Stop | ConvertFrom-JSON
 }
 
+function Get-CompanyEmailDomain {
+    $companyConfig = Get-CompanyConfig
+    return $companyConfig.organization.emailDomain
+}
+
 function Get-CompanyProxyConfig {
     $companyConfig = Get-CompanyConfig
     return $companyConfig.proxy

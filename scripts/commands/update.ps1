@@ -99,12 +99,12 @@ if ($oldAppConfig.git.version -ne $newAppConfig.git.version) {
 
 if (($oldAppConfig.git.systemConfig | ConvertTo-Json -Compress) -ne ($newAppConfig.git.systemConfig | ConvertTo-Json -Compress)) {
     Write-Host "Updating Git system config"
-    Set-GitSystemConfig -OnlyConfigFile
+    Set-GitSystemConfig
 }
 
 if (($oldAppConfig.git.globalConfig | ConvertTo-Json -Compress) -ne ($newAppConfig.git.globalConfig | ConvertTo-Json -Compress)) {
     Write-Host "Updating Git global config"
-    Set-GitGlobalConfig -OnlyConfigFile
+    Set-GitGlobalConfig -NoPrompt
 }
 
 if ($oldAppConfig.proxy.version -ne $newAppConfig.proxy.version) {
