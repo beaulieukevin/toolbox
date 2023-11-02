@@ -87,8 +87,8 @@ function Save-PlanDependencies($Arguments, $PlansTemporaryDirectory) {
 }
 
 function Test-PlanConflicts($PlansTemporaryDirectory) {
-    $localPlans = Get-ChildItem $Env:TOOLBOX_PLANS -ErrorAction Stop
-    $localPlans += Get-ChildItem $PlansTemporaryDirectory -ErrorAction Stop
+    [array]$localPlans = Get-ChildItem $Env:TOOLBOX_PLANS -ErrorAction Stop
+    [array]$localPlans += Get-ChildItem $PlansTemporaryDirectory -ErrorAction Stop
 
 	$cursor = 0
 	
