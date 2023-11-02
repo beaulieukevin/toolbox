@@ -58,7 +58,7 @@ function Remove-Plan($PlanName) {
 }
 
 if (!$Arguments) {
-    Write-Host "You must provide a plan name to uninstall it.`n"
+    Write-Host "You must provide a plan name to uninstall it.`n" -ForegroundColor Yellow
     Write-Help
     return
 }
@@ -66,7 +66,7 @@ if (!$Arguments) {
 $planName = Get-FirtArgument $Arguments
     
 if (!(Test-PlanConfig -PlanName $planName)) {
-    Write-Host "The plan '$planName' is not downloaded via Toolbox."
+    Write-Host "The plan '$planName' is not downloaded via Toolbox." -ForegroundColor Yellow
     return
 }
 

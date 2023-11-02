@@ -1,21 +1,144 @@
 function Write-Help {
     Write-Host "Usage" -ForegroundColor White
-    Write-Host "toolbox <command> [<args>]"
-    Write-Host ""
+    Write-Host "  toolbox <command> [<args>]`n"
     Write-Host "Commands to get Toolbox information" -ForegroundColor White
-    Write-Host "docs                          : Open Toolbox manual page on your default browser"
-    Write-Host "help                          : Get help from Toolbox"
-    Write-Host "version                       : Get Toolbox version"
-    Write-Host ""
+    Write-Host "  docs                          : Open Toolbox manual page on your default browser"
+    Write-Host "  help                          : Get help from Toolbox"
+    Write-Host "  version                       : Get Toolbox version`n"
     Write-Host "Commands to manage Toolbox" -ForegroundColor White
-    Write-Host "privacy on|off|status         : Manage analytics privacy"
-    Write-Host "proxy on|off|status           : Start or stop the configured local proxy"
-    Write-Host "update                        : Update Toolbox and all downloaded plans"
-    Write-Host ""
+    Write-Host "  privacy on|off|status         : Manage analytics privacy"
+    Write-Host "  proxy on|off|status           : Start or stop the configured local proxy"
+    Write-Host "  update                        : Update Toolbox and all downloaded plans`n"
     Write-Host "Commands to manage plans and tools" -ForegroundColor White
-    Write-Host "install <args>                : Download the target plan and install its associated tool"
-    Write-Host "list                          : List all plans available remotely and downloaded locally"
-    Write-Host "uninstall <args>              : Uninstall the target plan and its associated tool"
+    Write-Host "  install <args>                : Download the target plan and install its associated tool"
+    Write-Host "  list                          : List all plans available remotely and downloaded locally"
+    Write-Host "  uninstall <args>              : Uninstall the target plan and its associated tool"
+}
+
+function Get-CompanyConfig {
+    return Get-Content -Path "$Env:TOOLBOX_HOME\config.json" -ErrorAction Stop | ConvertFrom-JSON
+}
+
+function Get-CompanyDocsUrl {
+    $companyConfig = Get-CompanyConfig
+    return $companyConfig.toolbox.docsUrl
+}
+
+function Get-CompanyPlans {
+    $companyConfig = Get-CompanyConfig
+    return $companyConfig.plans
+}
+
+function Get-PlanGitRepository($PlanName) {
+    $companyPlans = Get-CompanyPlans
+    return $companyPlans.$PlanName.gitRepository
+}
+
+function Get-ToolboxVersion {
+    $toolbox = Get-Content -Path "$Env:TOOLBOX_HOME\toolbox.json" -ErrorAction Stop | ConvertFrom-JSON
+    return $toolbox.version
+}
+
+function Test-PlanConfig($PlanName, $PlansTemporaryDirectory) {
+    if (Test-Path "$Env:TOOLBOX_PLANS\$PlanName\plan.json") {
+        return $true
+    }
+    else {
+        return Test-Path "$PlansTemporaryDirectory\$PlanName\plan.json"
+    }
+}
+
+function Get-PlanConfig($PlanName, $PlansTemporaryDirectory) {
+    if (Test-Path "$Env:TOOLBOX_PLANS\$PlanName\plan.json") {
+        return Get-Content -Path "$Env:TOOLBOX_PLANS\$PlanName\plan.json" -ErrorAction Stop | ConvertFrom-Json
+    }
+    else {
+        return Get-Content -Path "$PlansTemporaryDirectory\$PlanName\plan.json" -ErrorAction Stop | ConvertFrom-Json
+    }
+}
+
+function Get-PlanVersion($PlanName, $PlansTemporaryDirectory) {
+    $planConfig = Get-PlanConfig -PlanName $planName -PlansTemporaryDirectory $PlansTemporaryDirectory
+    return $planConfig.version
+}
+
+function Get-MarkdownFileUrlFromRepository($GitRepository, $MarkdownType) {
+    if ($GitRepository.Contains("github")) {
+        $url = Get-MarkdownFileUrlFromGitHubRepository -GitRepository $GitRepository -MarkdownType $MarkdownType
+        return $url
+    }
+
+    if ($GitRepository.Contains("gitlab")) {
+        $url = Get-MarkdownFileUrlFromGitLabRepository -GitRepository $GitRepository -MarkdownType $MarkdownType
+        return $url
+    }
+
+    if ($GitRepository.Contains("bitbucket")) {
+        $url = Get-MarkdownFileUrlFromBitBucketRepository -GitRepository $GitRepository -MarkdownType $MarkdownType
+        return $url
+    }
+
+    if ($GitRepository.Contains("dev.azure.com")) {
+        $url = Get-MarkdownFileUrlFromAzureDevOpsRepository -GitRepository $GitRepository -MarkdownType $MarkdownType
+        return $url
+    }
+
+    return "UNSUPPORTED"
+}
+
+function Get-MarkdownFileUrlFromGitHubRepository($GitRepository, $MarkdownType) {
+    $markdownUrl = $GitRepository.Replace(".git", "/blob/main/$MarkdownType.md")
+    return $markdownUrl
+}
+
+function Get-MarkdownFileUrlFromGitLabRepository($GitRepository, $MarkdownType) {
+    $markdownUrl = $GitRepository.Replace(".git", "/-/blob/master/$MarkdownType.md")
+    return $markdownUrl
+}
+
+function Get-MarkdownFileUrlFromBitBucketRepository($GitRepository, $MarkdownType) {
+    $splitUrl = $GitRepository -split "/"
+    $markdownUrl = $splitUrl[0] + "//" + $splitUrl[2] + "/projects/" + $splitUrl[4] + "/repos/" + $splitUrl[5].Replace(".git", "/browse/$MarkdownType.md")
+    return $markdownUrl
+}
+
+function Get-MarkdownFileUrlFromAzureDevOpsRepository($GitRepository, $MarkdownType) {
+    $splitUrl = $GitRepository -split "@"
+    $markdownUrl = "https://" + $splitUrl[1]
+    $markdownUrl += "?path=/$MarkdownType.md"
+    return $markdownUrl
+}
+
+function Get-ToolboxAnalytics {
+    $companyConfig = Get-CompanyConfig
+    return $companyConfig.analytics
+}
+
+function Get-UserConfig {
+    if (!(Test-Path "$Env:TOOLBOX_HOME\local\config.json")) {
+        New-Item -ItemType Directory -Path "$Env:TOOLBOX_HOME\local" -ErrorAction SilentlyContinue | Out-Null
+        New-Item -ItemType File -Path "$Env:TOOLBOX_HOME\local\config.json"  -ErrorAction SilentlyContinue | Out-Null
+
+        $initContent = @{
+            "userUuid"              = [guid]::NewGuid().Guid;
+            "areAnalyticsAnonymous" = $true;
+        }
+
+        $content = Get-Content -Path "$Env:TOOLBOX_HOME\local\config.json" -ErrorAction Stop | ConvertFrom-JSON
+        $content += $initContent
+        $content | ConvertTo-JSON | Set-Content "$Env:TOOLBOX_HOME\local\config.json"
+    }
+
+    return Get-Content -Path "$Env:TOOLBOX_HOME\local\config.json" -ErrorAction Stop | ConvertFrom-JSON
+}
+
+function Get-CompanyName {
+    $companyConfig = Get-CompanyConfig
+    return $companyConfig.organization.name
+}
+
+function Set-UserConfig($Config) {
+    $Config | ConvertTo-JSON | Set-Content "$Env:TOOLBOX_HOME\local\config.json" -ErrorAction Stop
 }
 
 function Write-Task($Text) {
@@ -71,94 +194,48 @@ function Get-CompanyEmailDomain {
     return $companyConfig.organization.emailDomain
 }
 
-function Get-CompanyName {
-    $companyConfig = Get-CompanyConfig
-    return $companyConfig.organization.name
-}
-
-function Get-ToolboxAnalytics {
-    $companyConfig = Get-CompanyConfig
-    return $companyConfig.analytics
-}
-
 function Get-CompanyEnvironmentVariables {
     $companyConfig = Get-CompanyConfig
     return $companyConfig.environmentVariables
 }
 
-function Get-CompanyDocsUrl {
-    $companyConfig = Get-CompanyConfig
-    return $companyConfig.toolbox.docsUrl
+function Get-PlanConfig($PlanName, $PlansTemporaryDirectory) {
+    if (Test-Path "$Env:TOOLBOX_PLANS\$PlanName\plan.json") {
+        return Get-Content -Path "$Env:TOOLBOX_PLANS\$PlanName\plan.json" -ErrorAction Stop | ConvertFrom-Json
+    }
+    else {
+        return Get-Content -Path "$PlansTemporaryDirectory\$PlanName\plan.json" -ErrorAction Stop | ConvertFrom-Json
+    }
 }
 
-function Get-CompanyPlans {
-    $companyConfig = Get-CompanyConfig
-    return $companyConfig.plans
+function Get-PlanDependencies($PlanName, $PlansTemporaryDirectory) {
+    $planConfig = Get-PlanConfig -PlanName $PlanName -PlansTemporaryDirectory $PlansTemporaryDirectory
+    return $planConfig.dependencies
 }
 
-function Get-PlanConfig($PlanName) {
-    return Get-Content -Path "$Env:TOOLBOX_HOME\local\plans\$PlanName\plan.json" -ErrorAction Stop | ConvertFrom-Json
-}
-
-function Get-PlanPackageFolder($PlanName) {
-    $planConfig = Get-PlanConfig -PlanName $PlanName
+function Get-PlanPackageFolder($PlanName, $PlansTemporaryDirectory) {
+    $planConfig = Get-PlanConfig -PlanName $PlanName -PlansTemporaryDirectory $PlansTemporaryDirectory
     return $planConfig.package.folder
 }
 
-function Get-PlanPackageShortcutName($PlanName) {
-    $planConfig = Get-PlanConfig -PlanName $PlanName
+function Get-PlanPackageShortcutName($PlanName, $PlansTemporaryDirectory) {
+    $planConfig = Get-PlanConfig -PlanName $PlanName -PlansTemporaryDirectory $PlansTemporaryDirectory
     return $planConfig.package.shortcutName
 }
 
-function Get-PlanCli($PlanName) {
-    $planConfig = Get-PlanConfig -PlanName $PlanName
+function Get-PlanPackageShortcutTarget($PlanName, $PlansTemporaryDirectory) {
+    $planConfig = Get-PlanConfig -PlanName $PlanName -PlansTemporaryDirectory $PlansTemporaryDirectory
+    return $planConfig.package.shortcutTarget
+}
+
+function Get-PlanCli($PlanName, $PlansTemporaryDirectory) {
+    $planConfig = Get-PlanConfig -PlanName $PlanName -PlansTemporaryDirectory $PlansTemporaryDirectory
     return $planConfig.cli
-}
-
-function Get-PlanVersion($PlanName) {
-    $planConfig = Get-PlanConfig -PlanName $planName
-    return $planConfig.version
-}
-
-function Get-PlanGitRepository($PlanName) {
-    $companyPlans = Get-CompanyPlans
-    return $companyPlans.$PlanName.gitRepository
-}
-
-function Test-PlanConfig($PlanName) {
-    return Test-Path "$Env:TOOLBOX_PLANS\$PlanName\plan.json"
 }
 
 function Get-ToolboxAutoUpdateConfig {
     $companyConfig = Get-CompanyConfig
     return $companyConfig.toolbox.autoUpdate
-}
-
-function Get-ToolboxVersion {
-    $toolbox = Get-Content -Path "$Env:TOOLBOX_HOME\toolbox.json" -ErrorAction Stop | ConvertFrom-JSON
-    return $toolbox.version
-}
-
-function Get-UserConfig {
-    if (!(Test-Path "$Env:TOOLBOX_HOME\local\config.json")) {
-        New-Item -ItemType Directory -Path "$Env:TOOLBOX_HOME\local" -ErrorAction SilentlyContinue | Out-Null
-        New-Item -ItemType File -Path "$Env:TOOLBOX_HOME\local\config.json"  -ErrorAction SilentlyContinue | Out-Null
-
-        $initContent = @{
-            "userUuid"              = [guid]::NewGuid().Guid;
-            "areAnalyticsAnonymous" = $true;
-        }
-
-        $content = Get-Content -Path "$Env:TOOLBOX_HOME\local\config.json" -ErrorAction Stop | ConvertFrom-JSON
-        $content += $initContent
-        $content | ConvertTo-JSON | Set-Content "$Env:TOOLBOX_HOME\local\config.json"
-    }
-
-    return Get-Content -Path "$Env:TOOLBOX_HOME\local\config.json" -ErrorAction Stop | ConvertFrom-JSON
-}
-
-function Set-UserConfig($Config) {
-    $Config | ConvertTo-JSON | Set-Content "$Env:TOOLBOX_HOME\local\config.json" -ErrorAction Stop
 }
 
 function Send-ToolboxAnalytics($Command, $Arguments, $ScriptError) {
@@ -438,51 +515,4 @@ function Register-ToolboxAutoUpdate {
     $taskName = "ToolboxAutoUpdateAtLogon"
     $trigger = New-ScheduledTaskTrigger -AtLogon
     Register-ScheduledTask -Action $action -Trigger $trigger -TaskPath "\Toolbox\AutoUpdate" -TaskName $taskName -Description "Start Toolbox auto update" -ErrorAction SilentlyContinue | Out-Null
-}
-
-function Get-MarkdownFileUrlFromRepository($GitRepository, $MarkdownType) {
-    if ($GitRepository.Contains("github")) {
-        $url = Get-MarkdownFileUrlFromGitHubRepository -GitRepository $GitRepository -MarkdownType $MarkdownType
-        return $url
-    }
-
-    if ($GitRepository.Contains("gitlab")) {
-        $url = Get-MarkdownFileUrlFromGitLabRepository -GitRepository $GitRepository -MarkdownType $MarkdownType
-        return $url
-    }
-
-    if ($GitRepository.Contains("bitbucket")) {
-        $url = Get-MarkdownFileUrlFromBitBucketRepository -GitRepository $GitRepository -MarkdownType $MarkdownType
-        return $url
-    }
-
-    if ($GitRepository.Contains("dev.azure.com")) {
-        $url = Get-MarkdownFileUrlFromAzureDevOpsRepository -GitRepository $GitRepository -MarkdownType $MarkdownType
-        return $url
-    }
-
-    return "UNSUPPORTED"
-}
-
-function Get-MarkdownFileUrlFromGitHubRepository($GitRepository, $MarkdownType) {
-    $markdownUrl = $GitRepository.Replace(".git", "/blob/main/$MarkdownType.md")
-    return $markdownUrl
-}
-
-function Get-MarkdownFileUrlFromGitLabRepository($GitRepository, $MarkdownType) {
-    $markdownUrl = $GitRepository.Replace(".git", "/-/blob/master/$MarkdownType.md")
-    return $markdownUrl
-}
-
-function Get-MarkdownFileUrlFromBitBucketRepository($GitRepository, $MarkdownType) {
-    $splitUrl = $GitRepository -split "/"
-    $markdownUrl = $splitUrl[0] + "//" + $splitUrl[2] + "/projects/" + $splitUrl[4] + "/repos/" + $splitUrl[5].Replace(".git", "/browse/$MarkdownType.md")
-    return $markdownUrl
-}
-
-function Get-MarkdownFileUrlFromAzureDevOpsRepository($GitRepository, $MarkdownType) {
-    $splitUrl = $GitRepository -split "@"
-    $markdownUrl = "https://" + $splitUrl[1]
-    $markdownUrl += "?path=/$MarkdownType.md"
-    return $markdownUrl
 }

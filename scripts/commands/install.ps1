@@ -8,10 +8,9 @@ function Add-Link($PlanName) {
         return
     }
 
-    $planConfig = Get-Content -Path "$Env:TOOLBOX_HOME\local\plans\$PlanName\plan.json" -ErrorAction Stop | ConvertFrom-JSON
-    $folder = $planConfig.package.folder
-    $shortcutTarget = $planConfig.package.shortcutTarget
-    $shortcutName = $planConfig.package.shortcutName
+    $folder = Get-PlanPackageFolder -PlanName $PlanName
+    $shortcutTarget = Get-PlanPackageShortcutTarget -PlanName $PlanName
+    $shortcutName = Get-PlanPackageShortcutName -PlanName $PlanName
 
     New-Shortcut -TargetPath $Env:TOOLBOX_APPS\$folder$shortcutTarget -ShortcutName $shortcutName
 }
@@ -21,98 +20,124 @@ function Add-Cli($PlanName) {
         return
     }
     
-    $planConfig = Get-Content -Path "$Env:TOOLBOX_HOME\local\plans\$PlanName\plan.json" -ErrorAction Stop | ConvertFrom-JSON
-    $newCliName = $planConfig.cli
+    $newCliName = Get-PlanCli -PlanName $PlanName
 
-    if ((Test-Path "$Env:TOOLBOX_HOME\local\plans\$PlanName\bin\cli.ps1") -and $newCliName) {
+    if ((Test-Path "$Env:TOOLBOX_PLANS\$PlanName\bin\cli.ps1") -and $newCliName) {
         Write-Task "Adding custom '$newCliName' CLI in Toolbox"
-
-        $items = Get-ChildItem -Path "$Env:TOOLBOX_HOME\local\bin" -ErrorAction Stop
-        foreach ($item in $items) {
-            $currentCliName = $item.BaseName
-            $currentCliNameExtension = $item.Name
-            if ($currentCliName -eq $newCliName) {
-                $content = Get-Content "$Env:TOOLBOX_HOME\local\bin\$currentCliNameExtension"
-                $cliRelatedPlan = $content[3]
-                $cliRelatedPlan = $cliRelatedPlan.Replace('powershell -NoProfile -ExecutionPolicy bypass -File "%current_location%..\plans\', "")
-                $cliRelatedPlan = $cliRelatedPlan.Replace('\bin\cli.ps1" %command%', "")
-
-                if ($PlanName -ne $cliRelatedPlan) {
-                    Write-CliWarning "Cannot add '$newCliName' CLI as there is already an existing CLI with the same alias name."
-                    Write-CliWarning "The existing CLI belongs to '$cliRelatedPlan' plan."
-                    Write-CliWarning "Please contact the responsible of '$PlanName' and '$cliRelatedPlan' plans to solve the issue."
-                    return
-                }
-            }
-        }
 
         Write-Host "Creating '$newCliName' bat file."
 
-        New-Item -Path "$Env:TOOLBOX_HOME\local\bin\$newCliName.bat" -ItemType File -Force -ErrorAction Stop | Out-Null
-        Add-Content -Path "$Env:TOOLBOX_HOME\local\bin\$newCliName.bat" -Value "@echo OFF"
-        Add-Content -Path "$Env:TOOLBOX_HOME\local\bin\$newCliName.bat" -Value "set current_location=%~dp0"
-        Add-Content -Path "$Env:TOOLBOX_HOME\local\bin\$newCliName.bat" -Value "set command=%*"
+        New-Item -Path "$Env:TOOLBOX_BIN\$newCliName.bat" -ItemType File -Force -ErrorAction Stop | Out-Null
+        Add-Content -Path "$Env:TOOLBOX_BIN\$newCliName.bat" -Value "@echo OFF"
+        Add-Content -Path "$Env:TOOLBOX_BIN\$newCliName.bat" -Value "set current_location=%~dp0"
+        Add-Content -Path "$Env:TOOLBOX_BIN\$newCliName.bat" -Value "set command=%*"
         $targetPath = "powershell -NoProfile -ExecutionPolicy bypass -File "
         $targetPath += '"'
         $targetPath += "%current_location%..\plans\$PlanName\bin\cli.ps1"
         $targetPath += '"'
         $targetPath += " %command%"
-        Add-Content -Path "$Env:TOOLBOX_HOME\local\bin\$newCliName.bat" -Value $targetPath
+        Add-Content -Path "$Env:TOOLBOX_BIN\$newCliName.bat" -Value $targetPath
     }
 }
 
 function Install-Plan($Arguments) {
-    if (!$Arguments) {
-        Write-Host "A plan name must be provided."
-        Write-Host ""
-        Write-Help
-        return
-    }
-
     $planName = Get-FirtArgument -Arguments $Arguments
     $otherOptions = Get-RemainingArguments -Arguments $Arguments
 
-    $appConfig = Get-AppConfig
-    $plans = $appConfig.plans
-    $gitRepository = $plans.$planName.gitRepository
-
-    if (!$gitRepository) {
-        Write-Host "The plan '$planName' is not listed in Toolbox configuration. Try again with another plan name."
-        Write-Host "Run the command below to see plans available for download:"
-        Write-Command "toolbox list"
-        return
-    }
-    
-    Write-Task "Downloading '$planName' from $gitRepository"
-
-    if (Test-Path -Path "$Env:TOOLBOX_HOME\local\plans\$planName") {
-        Write-Host "The plan '$planName' has been already downloaded. Skipping download."
-        Write-Host "You can update the existing plans by running:"
-        Write-Command "toolbox update"
-    }
-    else {
-        Start-Git @("-C", "$Env:TOOLBOX_HOME\local\plans", "clone", $gitRepository, $planName)
-
-        if (!(Test-Path -Path "$Env:TOOLBOX_HOME\local\plans\$planName")) {
-            Write-CliWarning "The plan '$planName' was not found in the remote repository."
-            Write-CliWarning "Therefore the installation has been aborted."
-            return
-        }
-    }
-
-    $planConfig = Get-Content -Path "$Env:TOOLBOX_HOME\local\plans\$planName\plan.json" -ErrorAction Stop | ConvertFrom-JSON
-
-    foreach ($dependency in $planConfig.dependencies ) {
+    foreach ($dependency in (Get-PlanDependencies -PlanName $planName) ) {
         Install-Plan $dependency.name
     }
 
-    if (Test-Path "$Env:TOOLBOX_HOME\local\plans\$planName\bin\install.ps1") {
-        Write-Task "Executing '$planName' plan installation"
-        ."$Env:TOOLBOX_HOME\local\plans\$planName\bin\install.ps1" $otherOptions
+    if (Test-Path "$Env:TOOLBOX_PLANS\$planName\bin\install.ps1") {
+        ."$Env:TOOLBOX_PLANS\$planName\bin\install.ps1" $otherOptions
     }
 
     Add-Link -PlanName $planName
     Add-Cli -PlanName $planName
 }
 
-Install-Plan $Arguments
+function Save-PlanDependencies($Arguments, $PlansTemporaryDirectory) {
+    if (!$Arguments) {
+        throw "The installation pre-check has failed due to a plan name missing in dependencies."
+    }
+
+    $planName = Get-FirtArgument -Arguments $Arguments
+    $gitRepository = Get-PlanGitRepository -PlanName $planName
+
+    if (!$gitRepository) {
+        throw "The installation pre-check has failed due to a missing Git repository in Toolbox configuration."
+    }
+    
+    Write-Task "Downloading '$planName' from $gitRepository"
+
+    if (!(Test-PlanConfig -PlanName $planName)) {
+        Start-Git @("-C", $PlansTemporaryDirectory, "clone", $gitRepository, $planName)
+
+        if (!(Test-Path "$PlansTemporaryDirectory\$planName\plan.json")) {
+            throw "The installation pre-check has failed due to a failure while downloading '$planName' plan. The installation has been aborted."
+        }
+    }
+    else {
+        Write-Host "'$planName' plan has been already downloaded. Skipping download."
+    }
+
+    foreach ($dependency in (Get-PlanDependencies -PlanName $planName -PlansTemporaryDirectory $PlansTemporaryDirectory) ) {
+        Save-PlanDependencies -Arguments $dependency.name -PlansTemporaryDirectory $PlansTemporaryDirectory
+    }
+}
+
+function Test-PlanConflicts($PlansTemporaryDirectory) {
+    $localPlans = Get-ChildItem $Env:TOOLBOX_PLANS -ErrorAction Stop
+    $localPlans += Get-ChildItem $PlansTemporaryDirectory -ErrorAction Stop
+
+    foreach ($localPlan in $localPlans) {
+        $cursor = $localPlans.IndexOf($localPlan)
+        for ($i = ($cursor + 1); $i -lt ($localPlans.Count); $i++) {
+            $currentPlanName = $localPlan.Name
+            $nextPlanName = $localPlans[$i].Name
+
+            $folderCurrent = Get-PlanPackageFolder -PlanName $currentPlanName -PlansTemporaryDirectory $PlansTemporaryDirectory
+            $shortcutCurrent = Get-PlanPackageShortcutName -PlanName $currentPlanName -PlansTemporaryDirectory $PlansTemporaryDirectory
+            $cliCurrent = Get-PlanCli -PlanName $currentPlanName -PlansTemporaryDirectory $PlansTemporaryDirectory
+
+            $folderNext = Get-PlanPackageFolder -PlanName $nextPlanName -PlansTemporaryDirectory $PlansTemporaryDirectory
+            $shortcutNext = Get-PlanPackageShortcutName -PlanName $nextPlanName -PlansTemporaryDirectory $PlansTemporaryDirectory
+            $cliNext = Get-PlanCli -PlanName $nextPlanName -PlansTemporaryDirectory $PlansTemporaryDirectory
+
+            if ($folderCurrent -and $folderNext -and ($folderCurrent -eq $folderNext)) {
+                throw "The installation pre-check has failed due to a folder name conflict between '$currentPlanName' and '$nextPlanName' plans."
+            }
+
+            if ($shortcutCurrent -and $shortcutNext -and ($shortcutCurrent -eq $shortcutNext)) {
+                throw "The installation pre-check has failed due to a shortcut name conflict between '$currentPlanName' and '$nextPlanName' plans."
+            }
+
+            if ($cliCurrent -and $cliNext -and ($cliCurrent -eq $cliNext)) {
+                throw "The installation pre-check has failed due to a CLI name conflict between '$currentPlanName' and '$nextPlanName' plans."
+            }
+        }
+    }
+}
+
+if (!$Arguments) {
+    Write-Host "A plan name must be provided.`n" -ForegroundColor Yellow
+    Write-Help
+    return
+}
+
+$planName = Get-FirtArgument -Arguments $Arguments
+$gitRepository = Get-PlanGitRepository -PlanName $planName
+
+if (!$gitRepository) {
+    Write-Host "The plan '$planName' doesn't exist in Toolbox. Try with another name.`n" -ForegroundColor Yellow
+    Write-Help
+    return
+}
+
+$temporaryGuid = '{' + [guid]::NewGuid().ToString() + '}'
+$plansTemporaryDirectory = "$Env:TEMP\$temporaryGuid"
+New-Item -ItemType Directory -Path $plansTemporaryDirectory -ErrorAction SilentlyContinue | Out-Null
+Save-PlanDependencies -Arguments $Arguments -PlansTemporaryDirectory $plansTemporaryDirectory
+Test-PlanConflicts -PlansTemporaryDirectory $plansTemporaryDirectory
+Copy-Item -Path "$plansTemporaryDirectory\*" -Destination $Env:TOOLBOX_PLANS -Recurse
+Install-Plan -Arguments $Arguments
