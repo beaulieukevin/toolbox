@@ -90,8 +90,9 @@ function Test-PlanConflicts($PlansTemporaryDirectory) {
     $localPlans = Get-ChildItem $Env:TOOLBOX_PLANS -ErrorAction Stop
     $localPlans += Get-ChildItem $PlansTemporaryDirectory -ErrorAction Stop
 
+	$cursor = 0
+	
     foreach ($localPlan in $localPlans) {
-        $cursor = $localPlans.IndexOf($localPlan)
         for ($i = ($cursor + 1); $i -lt ($localPlans.Count); $i++) {
             $currentPlanName = $localPlan.Name
             $nextPlanName = $localPlans[$i].Name
@@ -116,6 +117,8 @@ function Test-PlanConflicts($PlansTemporaryDirectory) {
                 throw "The installation pre-check has failed due to a CLI name conflict between '$currentPlanName' and '$nextPlanName' plans."
             }
         }
+		
+		$cursor++
     }
 }
 
