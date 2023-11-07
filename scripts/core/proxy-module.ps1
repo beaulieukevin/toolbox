@@ -138,6 +138,7 @@ function Set-PxAutoRun {
 }
 
 function Start-Proxy {
+    Stop-Px
     Start-Px
 }
 
