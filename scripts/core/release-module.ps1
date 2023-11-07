@@ -117,7 +117,7 @@ Therefore, to update Toolbox and its associated plans, you will need to open a c
     if ($supportEmail) {
       $extraContent += @"
 <br/>
-<p style="margin:0;font-size:15px;line-height:24px;font-family:Arial,sans-serif;text-align:justify;text-justify:auto;">The support email address has changed. You can now reach us for support and requests at <a href="mailto:{{SUPPORT_EMAIL}}?subject=Toolbox" style="color:{{ORGANIZATION_BRAND_COLOR}};">{{SUPPORT_EMAIL}}</a>.</p>
+<p style="margin:0;font-size:15px;line-height:24px;font-family:Arial,sans-serif;text-align:justify;text-justify:auto;">The support email address has changed. You can now reach us for support and requests at <a href="mailto:{{SUPPORT_EMAIL}}?subject=Toolbox Support" style="color:{{ORGANIZATION_BRAND_COLOR}};">{{SUPPORT_EMAIL}}</a>.</p>
 "@
       $extraContent = $extraContent.Replace("{{SUPPORT_EMAIL}}", $supportEmail)
     }
@@ -253,7 +253,7 @@ function Get-PlansReleaseContent($AddedPlans, $UpdatedPlans, $DeprecatedPlans) {
 
     foreach ($planName in $DeprecatedPlans) {
       $toolboxGitRepository = Get-ToolboxGitRepository
-      $toolboxChangeLogUrl = Get-MarkdownFileUrlFromRepository -GitRepository $toolboxGitRepository -MarkdownType "CHANGELOG"
+      $toolboxChangeLogUrl = Get-MarkdownFileUrlFromRepository -GitRepository $toolboxGitRepository -MarkdownType "CHANGELOG-config"
       $extraContent += $deprecatedPlanTemplate
       $extraContent = $extraContent.Replace("{{PLAN_NAME}}", $planName)
       $extraContent = $extraContent.Replace("{{PLAN_TOOLBOX_CHANGELOG_URL}}", $toolboxChangeLogUrl)
@@ -374,7 +374,7 @@ function Send-ReleaseNotesMailMessage($ReleaseContent) {
                         <h1 style="font-size:24px;margin:0 0 18px 0;font-family:Arial,sans-serif;">Support</h1>
                         <p style="margin:0;font-size:15px;line-height:24px;font-family:Arial,sans-serif;text-align:justify;text-justify:auto;">Do you encounter issues? Do you have suggestions to improve Toolbox? Or do you like it and want to share it with us?</p>
                         <p style="margin:12px 0 0 0;font-size:15px;line-height:24px;font-family:Arial,sans-serif;">
-                          Send us an email at <a href="mailto:{{SUPPORT_EMAIL}}?subject=Toolbox" style="color:{{ORGANIZATION_BRAND_COLOR}};">{{SUPPORT_EMAIL}}</a>
+                          Send us an email at <a href="mailto:{{SUPPORT_EMAIL}}?subject=Toolbox Support" style="color:{{ORGANIZATION_BRAND_COLOR}};">{{SUPPORT_EMAIL}}</a>
                         </p>
                       </td>
                     </tr>
