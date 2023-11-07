@@ -15,13 +15,51 @@ function Write-Help {
     Write-Host "  uninstall <args>              : Uninstall the target plan and its associated tool"
 }
 
+function Write-Task($Text) {
+    Write-Host "==> " -ForegroundColor DarkMagenta -NoNewline
+    Write-Host $Text -ForegroundColor White
+}
+
+function Write-HostAsBot($Text) {
+    if (!$Text) {
+        return
+    }
+
+    $textArray = $Text.ToCharArray()
+    $totalNumberOfChar = $textArray.Count
+    $currentCharIndex = 0
+
+    foreach ($char in $textArray) {
+        $currentCharIndex++
+
+        if ($currentCharIndex -ne $totalNumberOfChar) {
+            Write-Host $char -NoNewline
+        }
+        else {
+            Write-Host $char
+        }
+		
+        Start-Sleep -Milliseconds 10
+    }
+}
+
 function Get-CompanyConfig {
     return Get-Content -Path "$Env:TOOLBOX_HOME\config.json" -ErrorAction Stop | ConvertFrom-JSON
+}
+
+function Get-ToolboxGitRepository {
+    $companyConfig = Get-CompanyConfig
+    return $companyConfig.toolbox.gitRepository
 }
 
 function Get-CompanyDocsUrl {
     $companyConfig = Get-CompanyConfig
     return $companyConfig.toolbox.docsUrl
+}
+
+function Get-CompanySupportEmail {
+    $companyConfig = Get-CompanyConfig
+    return $companyConfig.organization.supportEmail
 }
 
 function Get-CompanyPlans {
@@ -32,6 +70,11 @@ function Get-CompanyPlans {
 function Get-PlanGitRepository($PlanName) {
     $companyPlans = Get-CompanyPlans
     return $companyPlans.$PlanName.gitRepository
+}
+
+function Get-PlanGitRepositoryDescription($PlanName) {
+    $companyPlans = Get-CompanyPlans
+    return $companyPlans.$PlanName.description
 }
 
 function Get-ToolboxVersion {
@@ -141,54 +184,6 @@ function Set-UserConfig($Config) {
     $Config | ConvertTo-JSON | Set-Content "$Env:TOOLBOX_HOME\local\config.json" -ErrorAction Stop
 }
 
-function Write-Task($Text) {
-    Write-Host "==> " -ForegroundColor DarkMagenta -NoNewline
-    Write-Host $Text -ForegroundColor White
-}
-
-function Write-HostAsBot($Text) {
-    if (!$Text) {
-        return
-    }
-
-    $textArray = $Text.ToCharArray()
-    $totalNumberOfChar = $textArray.Count
-    $currentCharIndex = 0
-
-    foreach ($char in $textArray) {
-        $currentCharIndex++
-
-        if ($currentCharIndex -ne $totalNumberOfChar) {
-            Write-Host $char -NoNewline
-        }
-        else {
-            Write-Host $char
-        }
-		
-        Start-Sleep -Milliseconds 10
-    }
-}
-
-function Write-Command($Text) {
-    Write-Host "  $Text" -ForegroundColor White
-}
-
-function Write-CliWarning($Text) {
-    Write-Host "warning: $Text" -ForegroundColor Yellow
-}
-
-function Write-CliError($Text) {
-    Write-Host "error: $Text" -ForegroundColor Red
-}
-
-function Get-AppConfig {
-    return Get-Content -Path "$Env:TOOLBOX_HOME\config.json" -ErrorAction Stop | ConvertFrom-JSON
-}
-
-function Get-CompanyConfig {
-    return Get-Content -Path "$Env:TOOLBOX_HOME\config.json" -ErrorAction Stop | ConvertFrom-JSON
-}
-
 function Get-CompanyEmailDomain {
     $companyConfig = Get-CompanyConfig
     return $companyConfig.organization.emailDomain
@@ -197,15 +192,6 @@ function Get-CompanyEmailDomain {
 function Get-CompanyEnvironmentVariables {
     $companyConfig = Get-CompanyConfig
     return $companyConfig.environmentVariables
-}
-
-function Get-PlanConfig($PlanName, $PlansTemporaryDirectory) {
-    if (Test-Path "$Env:TOOLBOX_PLANS\$PlanName\plan.json") {
-        return Get-Content -Path "$Env:TOOLBOX_PLANS\$PlanName\plan.json" -ErrorAction Stop | ConvertFrom-Json
-    }
-    else {
-        return Get-Content -Path "$PlansTemporaryDirectory\$PlanName\plan.json" -ErrorAction Stop | ConvertFrom-Json
-    }
 }
 
 function Get-PlanDependencies($PlanName, $PlansTemporaryDirectory) {
@@ -240,8 +226,7 @@ function Get-ToolboxAutoUpdateConfig {
 
 function Send-ToolboxAnalytics($Command, $Arguments, $ScriptError) {
     try {
-        $appConfig = Get-AppConfig
-        $analytics = $appConfig.analytics
+        $analytics = Get-ToolboxAnalytics
 
         if (!$analytics) {
             return
@@ -263,7 +248,7 @@ function Send-ToolboxAnalytics($Command, $Arguments, $ScriptError) {
         if ($ScriptError) {
             $errorStackTrace = $ScriptError.ScriptStackTrace
             $errorMessage = $ScriptError.FullyQualifiedErrorId
-            $fileName = $appConfig.analytics.errorFileName
+            $fileName = $analytics.errorFileName
             $analytic = @{
                 "timestamp"      = $timestamp;
                 "userName"       = $userName;
@@ -275,7 +260,7 @@ function Send-ToolboxAnalytics($Command, $Arguments, $ScriptError) {
             }
         }
         else {
-            $fileName = $appConfig.analytics.usageFileName
+            $fileName = $analytics.usageFileName
             $analytic = @{
                 "timestamp"      = $timestamp;
                 "userName"       = $userName;
@@ -285,14 +270,14 @@ function Send-ToolboxAnalytics($Command, $Arguments, $ScriptError) {
             }
         }
         
-        $storagePath = $appConfig.analytics.storagePath
-        $maxFileSizeInMb = $appConfig.analytics.maxFileSizeInMb
+        $storagePath = $analytics.storagePath
+        $maxFileSizeInMb = $analytics.maxFileSizeInMb
 
         Optimize-AnalyticsFile -StoragePath $storagePath -FileName $fileName -MaxFileSizeInMb $maxFileSizeInMb
         Add-Analytic -StoragePath $storagePath -FileName $fileName -Data $analytic
     }
     catch {
-        Write-CliWarning "A configuration problem is preventing Toolbox from saving analytics."
+        Write-Host "A configuration problem is preventing Toolbox from saving analytics." -ForegroundColor Yellow
     }
 }
 
@@ -335,16 +320,6 @@ function Add-Analytic($StoragePath, $FileName, $Data) {
     $content | ConvertTo-JSON | Set-Content $StoragePath\$FileName.json
 }
 
-function Get-CliCommand($Arguments) {
-    if ($Arguments) {
-        $argumentsArray = $Arguments.Split(" ")
-        $command, $options = $argumentsArray
-        return $command
-    }
-
-    return ""
-}
-
 function Get-FirtArgument($Arguments) {
     if ($Arguments) {
         $argumentsArray = $Arguments.Split(" ")
@@ -353,16 +328,6 @@ function Get-FirtArgument($Arguments) {
     }
 
     return ""
-}
-
-function Get-CliOptions($Arguments) {
-    if ($Arguments) {
-        $argumentsArray = $Arguments.Split(" ")
-        $command, $options = $argumentsArray
-        return $options
-    }
-
-    return @()
 }
 
 function Get-RemainingArguments($Arguments) {
@@ -420,8 +385,8 @@ function New-Shortcut($TargetPath, $ShortcutName) {
         return
     }
 
-    $appConfig = Get-AppConfig
-    $shortcutsLocation = $appConfig.shortcutsLocation
+    $companyConfig = Get-CompanyConfig
+    $shortcutsLocation = $companyConfig.shortcutsLocation
 
     $fullShortcutsPath = $Env:USERPROFILE
 
@@ -448,8 +413,8 @@ function Remove-Shortcut($ShortcutName) {
         return
     }
 
-    $appConfig = Get-AppConfig
-    $shortcutsLocation = $appConfig.shortcutsLocation
+    $companyConfig = Get-CompanyConfig
+    $shortcutsLocation = $companyConfig.shortcutsLocation
 
     $fullShortcutsPath = $Env:USERPROFILE
 
@@ -467,8 +432,8 @@ function Remove-Shortcut($ShortcutName) {
 }
 
 function Reset-ToolboxLocalRepository {
-    $appConfig = Get-AppConfig
-    $defaultBranch = $appConfig.toolbox.defaultBranch
+    $companyConfig = Get-CompanyConfig
+    $defaultBranch = $companyConfig.toolbox.defaultBranch
 
     Start-Git @("-C", "$Env:TOOLBOX_HOME", "reset", "--hard", "origin/$defaultBranch", "--quiet")
 }

@@ -145,6 +145,19 @@ function Stop-Proxy {
     Stop-Px
 }
 
+function Update-Proxy {
+    Stop-Px
+    Expand-Px
+    Set-PxConfig
+    Start-Px
+}
+
+function Update-ProxyConfig {
+    Stop-Px
+    Set-PxConfig
+    Start-Px
+}
+
 function Get-ProxyProcesses {
     return Get-PxProcesses
 }
