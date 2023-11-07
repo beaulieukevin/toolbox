@@ -117,7 +117,7 @@ Therefore, to update Toolbox and its associated plans, you will need to open a c
     if ($supportEmail) {
       $extraContent += @"
 <br/>
-<p style="margin:0;font-size:15px;line-height:24px;font-family:Arial,sans-serif;text-align:justify;text-justify:auto;">The support email address has changed. You can now reach us at: <a href="mailto:{{SUPPORT_EMAIL}}?subject=Toolbox" style="color:{{ORGANIZATION_BRAND_COLOR}};">{{SUPPORT_EMAIL}}</a>.</p>
+<p style="margin:0;font-size:15px;line-height:24px;font-family:Arial,sans-serif;text-align:justify;text-justify:auto;">The support email address has changed. You can now reach us for support and requests at: <a href="mailto:{{SUPPORT_EMAIL}}?subject=Toolbox" style="color:{{ORGANIZATION_BRAND_COLOR}};">{{SUPPORT_EMAIL}}</a>.</p>
 "@
       $extraContent = $extraContent.Replace("{{SUPPORT_EMAIL}}", $supportEmail)
     }
