@@ -133,7 +133,7 @@ $gitRepository = Get-PlanGitRepository -PlanName $planName
 
 if (!$gitRepository) {
     Write-Host "The plan '$planName' doesn't exist in Toolbox. Try with another name.`n" -ForegroundColor Yellow
-    Write-Help
+    Write-Host "Use 'toolbox list' to see all available plans for installation." -ForegroundColor Yellow
     return
 }
 

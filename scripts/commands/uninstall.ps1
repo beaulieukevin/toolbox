@@ -67,6 +67,7 @@ $planName = Get-FirtArgument $Arguments
     
 if (!(Test-PlanConfig -PlanName $planName)) {
     Write-Host "The plan '$planName' is not downloaded via Toolbox." -ForegroundColor Yellow
+    Write-Host "Use 'toolbox list' to see all available plans for uninstallation." -ForegroundColor Yellow
     return
 }
 
