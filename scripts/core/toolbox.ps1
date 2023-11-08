@@ -1,4 +1,4 @@
-."$PSScriptRoot\..\shared\common-module.ps1"
+."$Env:TOOLBOX_HOME\scripts\shared\common-module.ps1"
 
 try {
 	Reset-ToolboxLocalRepository

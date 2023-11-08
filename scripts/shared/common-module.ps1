@@ -482,11 +482,9 @@ function Register-ToolboxAutoUpdate {
     Register-ScheduledTask -Action $action -Trigger $trigger -TaskPath "\Toolbox\AutoUpdate" -TaskName $taskName -Description "Start Toolbox auto update" -ErrorAction SilentlyContinue | Out-Null
 }
 
-$rootPath = Resolve-Path -Path "$PSScriptRoot\..\.." -ErrorAction Stop
-[System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $($rootPath.Path), "Process")
-[System.Environment]::SetEnvironmentVariable("TOOLBOX_APPS", "$($rootPath.Path)\local\apps", "Process")
-[System.Environment]::SetEnvironmentVariable("TOOLBOX_PLANS", "$($rootPath.Path)\local\plans", "Process")
-[System.Environment]::SetEnvironmentVariable("TOOLBOX_BIN", "$($rootPath.Path)\local\bin", "Process")
+[System.Environment]::SetEnvironmentVariable("TOOLBOX_APPS", "$Env:TOOLBOX_HOME\local\apps", "Process")
+[System.Environment]::SetEnvironmentVariable("TOOLBOX_PLANS", "$Env:TOOLBOX_HOME\local\plans", "Process")
+[System.Environment]::SetEnvironmentVariable("TOOLBOX_BIN", "$Env:TOOLBOX_HOME\local\bin", "Process")
 
 $variables = Get-CompanyEnvironmentVariables
 $restrictedVariables = @("HOME", "APPS", "PLANS", "BIN")
