@@ -1,19 +1,4 @@
-$rootPath = Resolve-Path -Path "$PSScriptRoot\..\.." -ErrorAction Stop
-[System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $($rootPath.Path), "Process")
-[System.Environment]::SetEnvironmentVariable("TOOLBOX_APPS", "$($rootPath.Path)\local\apps", "Process")
-[System.Environment]::SetEnvironmentVariable("TOOLBOX_PLANS", "$($rootPath.Path)\local\plans", "Process")
-[System.Environment]::SetEnvironmentVariable("TOOLBOX_BIN", "$($rootPath.Path)\local\bin", "Process")
-
-."$Env:TOOLBOX_HOME\scripts\shared\common-module.ps1"
-
-$variables = Get-CompanyEnvironmentVariables
-$restrictedVariables = @("HOME", "APPS", "PLANS", "BIN")
-foreach ($variableName in $variables.PSObject.Properties.Name) {
-	if ($variableName -notin $restrictedVariables) {
-		$variableValue = $variables.$variableName
-		[System.Environment]::SetEnvironmentVariable("TOOLBOX_$variableName", $variableValue, "Process")
-	}
-}
+."$PSScriptRoot\..\shared\common-module.ps1"
 
 try {
 	Reset-ToolboxLocalRepository
