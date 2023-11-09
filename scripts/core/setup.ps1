@@ -1,3 +1,7 @@
+if (Test-Path "$PSScriptRoot\..\..\pre-hook.ps1") {
+    ."$PSScriptRoot\..\..\pre-hook.ps1"
+}
+
 $rootPath = Resolve-Path -Path "$PSScriptRoot\..\.." -ErrorAction Stop
 [System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $($rootPath.Path), "Process")
 [System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $($rootPath.Path), "User")
