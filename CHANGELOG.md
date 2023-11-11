@@ -1,3 +1,7 @@
+# 1.1.2 (November 11, 2023)
+
+* Removing community health files to .github repository to spread toward other repositories
+
 # 1.1.1 (November 9, 2023)
 
 * Adding the possibility to add a pre-hook.ps1 script to allow companies to run their own pre-hook before the installation of Toolbox
