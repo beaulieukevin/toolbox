@@ -2,6 +2,4 @@
 
 If you believe you have found a security vulnerability in Toolbox, we encourage you to let us know right away. We will investigate all legitimate reports and do our best to quickly fix the problem.
 
-Please send all your security findings to:
-
-security@devwithkev.com
+Please send all your security findings to: security@devwithkev.com
