@@ -1,3 +1,7 @@
+# 1.1.3 (November 11, 2023)
+
+* Update README.md file to explain how to setup Toolbox within an organization
+
 # 1.1.2 (November 11, 2023)
 
 * Removing community health files to .github repository to spread toward other repositories
