@@ -1,3 +1,10 @@
+# 1.1.4 (November 12, 2023)
+
+* Update README.md file with a refactoring of Toolbox definition
+* Creation of a /docs folder to contain all sub README files
+* Creation of a README-admin file dedicated to Toolbox administrators
+* Creation of a README-user file dedicated to Toolbox users
+
 # 1.1.3 (November 11, 2023)
 
 * Update README.md file to explain how to setup Toolbox within an organization
