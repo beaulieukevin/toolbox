@@ -1,6 +1,6 @@
 ![Toolbox Image](/rsc/toolbox.png)
 
-# What is it?
+# What is it??
 
 Toolbox is a Windows Command Line Interface (CLI) allowing organizations to create, customize, centralize and scale common local environment configurations using their own source control management system through scripting.
 
