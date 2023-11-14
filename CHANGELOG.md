@@ -1,3 +1,7 @@
+# 1.1.6 (November 14, 2023)
+
+* Update README-admin.md and README-user files
+
 # 1.1.5 (November 12, 2023)
 
 * Update README-admin.md and README-user files

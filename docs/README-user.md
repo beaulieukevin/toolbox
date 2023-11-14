@@ -1,3 +1,0 @@
-## Add a pre-hook file (optional)
-
-You can optionally create a `pre-hook.ps1` file at the root of your repository. This pre-hook script will give you the possiblity to execute a custom PowerShell script before the setup of Toolbox on your software engineers local development environments. You can add things like writing a custom welcome message from your company, updating some environment variables, creating files and more... well whatever you have in mind.

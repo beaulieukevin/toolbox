@@ -1,6 +1,6 @@
 ![Toolbox Image](/rsc/toolbox.png)
 
-# What is it??
+# What is it?
 
 Toolbox is a Windows Command Line Interface (CLI) allowing organizations to create, customize, centralize and scale common local environment configurations using their own source control management system through scripting.
 
@@ -18,7 +18,7 @@ It provides multiple advantages:
 
 The documentation has been splitted based on two roles:
 
-* [As a Toolbox user](/docs/README-user.md), the person who wants to use Toolbox within their development environment.
-* [As a Toolbox administrator](/docs/README-admin.md), the person who is responsible of configuring and updating Toolbox for his colleagues.
+* As a [Toolbox user](/docs/README-user.md), the person who wants to use Toolbox within their development environment.
+* As a [Toolbox administrator](/docs/README-admin.md), the person who is responsible of configuring and updating Toolbox for his colleagues.
 
 Depending on your role, read the appropriate documentation.
