@@ -37,7 +37,7 @@ Within the configuration file `config.json`, multiple features can be setup thro
 
 ```json
 {
-    "version": "1.0.0"
+  "version": "1.0.0"
 }
 ```
 
@@ -47,14 +47,14 @@ It contains the version of your configuration file. It is your responsibility to
 
 ```json
 {
-    "organization": {
-        "name": "devwith.kev",
-        "emailDomain": "devwithkev.com",
-        "supportEmail": "support@devwithkev.com",
-        "smtpServer": "smtp.devwithkev.com",
-        "smtpPort": 25,
-        "mainBrandHexColor": "#000000"
-    }
+  "organization": {
+    "name": "devwith.kev",
+    "emailDomain": "devwithkev.com",
+    "supportEmail": "support@devwithkev.com",
+    "smtpServer": "smtp.devwithkev.com",
+    "smtpPort": 25,
+    "mainBrandHexColor": "#000000"
+  }
 }
 ```
 
@@ -71,12 +71,12 @@ It contains the version of your configuration file. It is your responsibility to
 
 ```json
 {
-    "toolbox": {
-		"gitRepository": "https://github.com/devwith-kev/toolbox.git",
-		"defaultBranch": "main",
-		"autoUpdate": true,
-		"docsUrl": "https://github.com/devwith-kev/toolbox/blob/main/README.md"
-	}
+  "toolbox": {
+    "gitRepository": "https://github.com/devwith-kev/toolbox.git",
+    "defaultBranch": "main",
+    "autoUpdate": true,
+    "docsUrl": "https://github.com/devwith-kev/toolbox/blob/main/README.md"
+  }
 }
 ```
 
@@ -91,12 +91,12 @@ It contains the version of your configuration file. It is your responsibility to
 
 ```json
 {
-    "plans": {
-		"vscode": {
-			"gitRepository": "https://github.com/devwith-kev/vscode.git",
-			"description": "Visual Studio Code, also commonly referred to as VS Code, is a source-code editor made by Microsoft with the Electron Framework, for Windows, Linux and macOS. Features include support for debugging, syntax highlighting, intelligent code completion, snippets and code refactoring."
-		}
+  "plans": {
+    "vscode": {
+      "gitRepository": "https://github.com/devwith-kev/vscode.git",
+      "description": "Visual Studio Code, also commonly referred to as VS Code, is a source-code editor made by Microsoft with the Electron Framework, for Windows, Linux and macOS. Features include support for debugging, syntax highlighting, intelligent code completion, snippets and code refactoring."
     }
+  }
 }
 ```
 
@@ -115,7 +115,7 @@ In this example `vscode` is a plan. Users will be able to execute a plan install
 
 ```json
 {
-    "shortcutsLocation": "\\YOUR_PATH\\Desktop"
+  "shortcutsLocation": "\\YOUR_PATH\\Desktop"
 }
 ```
 
@@ -129,9 +129,9 @@ If you add a `shortcutsLocation` field, Toolbox will use this value to override 
 
 ```json
 {
-    "environmentVariables": {
-		"CUSTOM_VAR": "HELLOWORLD"
-	}
+  "environmentVariables": {
+    "CUSTOM_VAR": "HELLOWORLD"
+  }
 }
 ```
 
@@ -143,22 +143,22 @@ You can customize Toolbox by provisioning environment variables at process level
 
 ```json
 {
-    "git": {
-		"version": "2.42.0.2",
-		"systemConfig": {
-			"--remove-section": "include",
-			"core.pager": "\"\"",
-			"core.autocrlf": "false",
-			"init.defaultBranch": "main",
-			"http.sslBackend": "openssl",
-			"pull.rebase": "true",
-			"credential.https://dev.azure.com.usehttppath": "true"
-		},
-		"globalConfig": {
-			"--unset": "init.defaultBranch",
-			"push.autoSetupRemote": "true"
-		}
-	}
+  "git": {
+    "version": "2.42.0.2",
+    "systemConfig": {
+      "--remove-section": "include",
+      "core.pager": "\"\"",
+      "core.autocrlf": "false",
+      "init.defaultBranch": "main",
+      "http.sslBackend": "openssl",
+      "pull.rebase": "true",
+      "credential.https://dev.azure.com.usehttppath": "true"
+    },
+    "globalConfig": {
+      "--unset": "init.defaultBranch",
+      "push.autoSetupRemote": "true"
+    }
+  }
 }
 ```
 
@@ -174,12 +174,12 @@ You can customize Toolbox by provisioning environment variables at process level
 
 ```json
 {
-    "analytics": {
-		"storagePath": "\\\\belwired.net\\dfs\\DATA\\ISS\\ITDev\\Data\\DEFR\\DEVX\\packages\\analytics",
-		"usageFileName": "analytics",
-		"errorFileName": "errors",
-		"maxFileSizeInMb": 1.5
-	}
+  "analytics": {
+    "storagePath": "\\\\belwired.net\\dfs\\DATA\\ISS\\ITDev\\Data\\DEFR\\DEVX\\packages\\analytics",
+    "usageFileName": "analytics",
+    "errorFileName": "errors",
+    "maxFileSizeInMb": 1.5
+  }
 }
 ```
 
@@ -196,14 +196,14 @@ You can activate Toolbox analytics by adding the object above. It will allow you
 
 ```json
 {
-    "proxy": {
-		"version": "0.4.0",
-		"config": {
-			"localHost": "127.0.0.1",
-			"localPort": "3128",
-			"noProxy": "127.0.0.*,10.*.*.*,192.168.*.*"
-		}
-	}
+  "proxy": {
+    "version": "0.4.0",
+    "config": {
+      "localHost": "127.0.0.1",
+      "localPort": "3128",
+      "noProxy": "127.0.0.*,10.*.*.*,192.168.*.*"
+    }
+  }
 }
 ```
 
