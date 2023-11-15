@@ -1,3 +1,7 @@
+# 1.1.9 (November 15, 2023)
+
+* Correct typo
+
 # 1.1.8 (November 15, 2023)
 
 * Update README-user.md and README-admin.md

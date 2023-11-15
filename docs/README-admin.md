@@ -4,7 +4,7 @@ As a Toolbox administrator, you are responsible of handling the configuration an
 
 # Setup Toolbox as an Administrator
 
-Fork this repository in your own GitHub organization. If your are not on GitHub simply copy the source code and create your own repository on Azure DevOps, GitLab, Bitbucket or whatever source control management you are using. To make the synchronization easier between GitHub and your other source control management, use different Git remotes within your Git repository.
+Fork this repository in your own GitHub organization. If you are not on GitHub simply copy the source code and create your own repository on Azure DevOps, GitLab, Bitbucket or whatever source control management you are using. To make the synchronization easier between GitHub and your other source control management, use different Git remotes within your Git repository.
 
 ## Add a Configuration File (required)
 
