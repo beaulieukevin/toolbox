@@ -1,6 +1,10 @@
+# Introduction
+
+As a Toolbox administrator, you are responsible of handling the configuration and the updates of the core Toolbox for your organization. In the following sections, we will explain you how to setup and configure Toolbox within your organization.
+
 # Setup Toolbox as an Administrator
 
-Fork this repository in your own GitHub organization. If your are not on GitHub simply copy the source code and create your own repository on Azure DevOps, GitLab, Bitbucket or whatever source control management you are using.
+Fork this repository in your own GitHub organization. If your are not on GitHub simply copy the source code and create your own repository on Azure DevOps, GitLab, Bitbucket or whatever source control management you are using. To make the synchronization easier between GitHub and your other source control management, use different Git remotes within your Git repository.
 
 ## Add a Configuration File (required)
 
@@ -100,7 +104,7 @@ It contains the version of your configuration file. It is your responsibility to
 }
 ```
 
-Plans are the main heart of Toolbox, this is where you define all the plans Toolbox will refer to. The list of plans are being referred by the `toolbox list` command. For more information on how to create or update an existing plan, read the [plan management guide](/docs/README-plan-management.md). 
+Plans are the main heart of Toolbox, this is where you define all the plans Toolbox will refer to. The list of plans are being referred by the `toolbox list` command. For more information on how to create or update an existing plan, read the [plan management guide](/docs/README-plan-management.md).
 
 In this example `vscode` is a plan. Users will be able to execute a plan installation by using `toolbox install vscode`. It is up to you to define the plan name.
 
@@ -221,3 +225,9 @@ If your organization is running behind a corporate proxy, it might be required t
 Toolbox provides your organization an extra feature which is called `hooks`. You can create a `pre-hook.ps1` file at the root directory of your repository. This script will be executed before the execution of the `setup.bat` file from the end user.
 
 This is useful if you would like to perform some tasks related to your organization before the installation of Toolbox from the end user.
+
+# Congratulations
+
+You now have all the pieces needed to setup, manage and update Toolbox within your organization.
+
+To go further, read the [plan management guide](/docs/README-plan-management.md) to learn how to create a plan or update existing plans.
