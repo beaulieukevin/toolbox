@@ -1,3 +1,7 @@
+# 1.1.10 (November 15, 2023)
+
+* Update admin page
+
 # 1.1.9 (November 15, 2023)
 
 * Correct typo

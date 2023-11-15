@@ -6,13 +6,13 @@ As a Toolbox administrator, you are responsible of handling the configuration an
 
 Fork this repository in your own GitHub organization. If you are not on GitHub simply copy the source code and create your own repository on Azure DevOps, GitLab, Bitbucket or whatever source control management you are using. To make the synchronization easier between GitHub and your other source control management, use different Git remotes within your Git repository.
 
-## Add a Configuration File (required)
+## Add a Configuration File
 
 To make Toolbox works, you'll need to create a configuration file called `config.json` located at the root of your repository. This configuration file will contain all the settings your organization will provide to your software engineers.
 
 Leave it empty for now. We will come back later below.
 
-## Add a Configuration Changelog File (recommended)
+## Add a Configuration Changelog File
 
 We strongly recommend you to create a configuration changelog file called `CHANGELOG-config.md` located at the root of your repository. This file will be used by your organization to describe all the changes you will perform on the `config.json` file. 
 
