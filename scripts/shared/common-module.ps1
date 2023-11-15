@@ -47,6 +47,11 @@ function Get-CompanyConfig {
     return Get-Content -Path "$Env:TOOLBOX_HOME\config.json" -ErrorAction Stop | ConvertFrom-JSON
 }
 
+function Get-CompanyConfigVersion {
+    $companyConfig = Get-CompanyConfig
+    return $companyConfig.version
+}
+
 function Get-ToolboxGitRepository {
     $companyConfig = Get-CompanyConfig
     return $companyConfig.toolbox.gitRepository
@@ -489,8 +494,8 @@ function Register-ToolboxAutoUpdate {
 $variables = Get-CompanyEnvironmentVariables
 $restrictedVariables = @("HOME", "APPS", "PLANS", "BIN")
 foreach ($variableName in $variables.PSObject.Properties.Name) {
-	if ($variableName -notin $restrictedVariables) {
-		$variableValue = $variables.$variableName
-		[System.Environment]::SetEnvironmentVariable("TOOLBOX_$variableName", $variableValue, "Process")
-	}
+    if ($variableName -notin $restrictedVariables) {
+        $variableValue = $variables.$variableName
+        [System.Environment]::SetEnvironmentVariable("TOOLBOX_$variableName", $variableValue, "Process")
+    }
 }

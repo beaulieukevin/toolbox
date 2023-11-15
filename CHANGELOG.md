@@ -1,3 +1,7 @@
+# 1.1.11 (November 15, 2023)
+
+* Added organization configuration version within the `toolbox version` command
+
 # 1.1.10 (November 15, 2023)
 
 * Update admin page
