@@ -1,3 +1,8 @@
+# 1.1.12 (November 17, 2023)
+
+* Added post-hook mechanism after installation of Toolbox. This is allowing organizations to post-execute commands such as: toolbox install ... or even other post scripting capabilities you would require.
+* Documentation updated
+
 # 1.1.11 (November 15, 2023)
 
 * Added organization configuration version within the `toolbox version` command

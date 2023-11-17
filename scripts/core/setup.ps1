@@ -1,7 +1,3 @@
-if (Test-Path "$PSScriptRoot\..\..\pre-hook.ps1") {
-    ."$PSScriptRoot\..\..\pre-hook.ps1"
-}
-
 $rootPath = Resolve-Path -Path "$PSScriptRoot\..\.." -ErrorAction Stop
 [System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $($rootPath.Path), "Process")
 [System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $($rootPath.Path), "User")
@@ -24,10 +20,18 @@ function Set-Toolbox {
     
     Read-Host "Press ENTER to start configuration"
 
+    if (Test-Path "$Env:TOOLBOX_HOME\pre-hook.ps1") {
+        ."$Env:TOOLBOX_HOME\pre-hook.ps1"
+    }
+
     Initialize-Toolbox
     Initialize-Proxy
     Initialize-Git
     Initialize-Analytics
+
+    if (Test-Path "$Env:TOOLBOX_HOME\post-hook.ps1") {
+        ."$Env:TOOLBOX_HOME\post-hook.ps1"
+    }
 
     Write-Host "#########################################################################" -ForegroundColor White
     Write-Host "                 Congratulations! Toolbox is configured.                 " -ForegroundColor White
