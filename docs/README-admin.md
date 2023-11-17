@@ -226,6 +226,10 @@ Toolbox provides your organization an extra feature which is called `hooks`. You
 
 This is useful if you would like to perform some tasks related to your organization before the installation of Toolbox from the end user.
 
+The same way, the creation of a `post-hook.ps1` file at the root directory of your repository will allow you to execute tasks after the installation of Toolbox.
+
+This is useful if you want to already execute commands such as the installation of tools using `toolbox install` or any other post scripts you would like to perform.
+
 # Congratulations
 
 You now have all the pieces needed to setup, manage and update Toolbox within your organization.
