@@ -1,3 +1,7 @@
+# 1.1.13 (November 18, 2023)
+
+* Removed ResetToolboxRepository within `toolbox.ps1`file which was leading to bad user experience when it comes to development ([#12](https://github.com/devwith-kev/toolbox/issues/12))
+
 # 1.1.12 (November 17, 2023)
 
 * Added post-hook mechanism after installation of Toolbox. This is allowing organizations to post-execute commands such as: toolbox install ... or even other post scripting capabilities you would require.

@@ -436,13 +436,6 @@ function Remove-Shortcut($ShortcutName) {
     }
 }
 
-function Reset-ToolboxLocalRepository {
-    $companyConfig = Get-CompanyConfig
-    $defaultBranch = $companyConfig.toolbox.defaultBranch
-
-    Start-Git @("-C", "$Env:TOOLBOX_HOME", "reset", "--hard", "origin/$defaultBranch", "--quiet")
-}
-
 function Start-Git($Params) {
     & "$Env:TOOLBOX_HOME\local\git\cmd\git.exe" $Params
 }
