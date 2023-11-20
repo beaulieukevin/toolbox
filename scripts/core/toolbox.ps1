@@ -22,6 +22,8 @@ try {
 			." $Env:TOOLBOX_HOME\scripts\commands\help.ps1"
 		}
 	}
+
+	Show-SignOutRequired
 }
 catch {
 	Send-ToolboxAnalytics -Command $command -Arguments $arguments -ScriptError $_

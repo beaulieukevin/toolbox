@@ -501,15 +501,17 @@ function Edit-EnvironmentValueData($EnvironmentValueName, $EnvironmentValueData,
                 $varValue = [System.Environment]::GetEnvironmentVariable($matches[1], "User")
                 $expandedValue = $expandedValue -replace $matches[0], $varValue
             }
-
-            if ($BinFileName) {
-                if ($expandedValue -and !(Test-Path "$expandedValue\$BinFileName")) {
-                    $newPath += $pathValue + ";"
+            
+            if ($expandedValue -ne $EnvironmentValueData) {
+                if ($BinFileName) {
+                    if ($expandedValue -and !(Test-Path "$expandedValue\$BinFileName")) {
+                        $newPath += $pathValue + ";"
+                    }
                 }
-            }
-            else {
-                if ($expandedValue) {
-                    $newPath += $pathValue + ";"
+                else {
+                    if ($expandedValue) {
+                        $newPath += $pathValue + ";"
+                    }
                 }
             }
         }
@@ -522,6 +524,26 @@ function Edit-EnvironmentValueData($EnvironmentValueName, $EnvironmentValueData,
 
 function Edit-PathEnvironmentValueData($EnvironmentValueData, $BinFileName) {
     Edit-EnvironmentValueData -EnvironmentValueName "PATH" -EnvironmentValueData $EnvironmentValueData -BinFileName $BinFileName
+}
+
+function Show-SignOutRequired {
+    if (!$Env:SIGNOUT_REQUIRED) {
+        return
+    }
+
+    Write-Host "A sign out is required to apply the changes." -ForegroundColor Yellow
+		
+    while ($true) {
+        $userInput = Read-Host "Do you want to sign out now [Y/n]?"
+        
+        if ($userInput -ceq "Y") {
+            logoff
+            break
+        }
+        if ($userInput -ceq "n") {
+            break
+        }
+    }
 }
 
 [System.Environment]::SetEnvironmentVariable("TOOLBOX_APPS", "$Env:TOOLBOX_HOME\local\apps", "Process")

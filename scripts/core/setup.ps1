@@ -36,7 +36,9 @@ function Set-Toolbox {
     Write-Host "      For more information on how to use Toolbox, use: toolbox help      " -ForegroundColor White
     Write-Host "#########################################################################`n" -ForegroundColor White
 
-    Read-Host "Press ENTER to exit configuration"
+    Read-Host "Press ENTER to finish configuration"
+    
+    Show-SignOutRequired
 
     exit
 }

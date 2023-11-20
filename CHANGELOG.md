@@ -1,3 +1,8 @@
+# 1.2.1 (November 20, 2023)
+
+* Added logic to check expanded value with the added value in Edit-EnvironmentValueData
+* Handle sign out if required
+
 # 1.2.0 (November 20, 2023)
 
 * Update PATH environment variables to be expandable to avoid unexpected behavior from machine OS.
