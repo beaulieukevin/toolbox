@@ -1,6 +1,7 @@
-# 1.1.13 (November 18, 2023)
+# 1.1.13 (November 20, 2023)
 
 * Removed ResetToolboxRepository within `toolbox.ps1`file which was leading to bad user experience when it comes to development ([#12](https://github.com/devwith-kev/toolbox/issues/12))
+* Moved Git and Proxy versions to `toolbox.json`file as those values are managed by Toolbox and not by the organization ([#8](https://github.com/devwith-kev/toolbox/issues/8))
 
 # 1.1.12 (November 17, 2023)
 

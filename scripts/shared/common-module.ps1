@@ -82,9 +82,13 @@ function Get-PlanGitRepositoryDescription($PlanName) {
     return $companyPlans.$PlanName.description
 }
 
+function Get-ToolboxConfig {
+    return Get-Content -Path "$Env:TOOLBOX_HOME\toolbox.json" -ErrorAction Stop | ConvertFrom-JSON
+}
+
 function Get-ToolboxVersion {
-    $toolbox = Get-Content -Path "$Env:TOOLBOX_HOME\toolbox.json" -ErrorAction Stop | ConvertFrom-JSON
-    return $toolbox.version
+    $toolboxConfig = Get-ToolboxConfig
+    return $toolboxConfig.version
 }
 
 function Test-PlanConfig($PlanName, $PlansTemporaryDirectory) {

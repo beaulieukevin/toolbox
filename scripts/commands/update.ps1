@@ -8,13 +8,13 @@ $releaseContent = @"
 
 Write-Task "Pulling latest updates of 'toolbox' core"
 $oldCompanyConfig = Get-CompanyConfig
-$oldToolboxVersion = Get-ToolboxVersion
+$oldToolboxConfig = Get-ToolboxConfig
 Start-Git @("-C", "$Env:TOOLBOX_HOME", "pull")
 $newCompanyConfig = Get-CompanyConfig
-$newToolboxVersion = Get-ToolboxVersion
+$newToolboxConfig = Get-ToolboxConfig
 
-if ($oldToolboxVersion -ne $newToolboxVersion) {
-    $releaseContent += Get-ToolboxReleaseContent -ToolboxNewVersion $newToolboxVersion
+if ($oldToolboxConfig.version -ne $newToolboxConfig.version) {
+    $releaseContent += Get-ToolboxReleaseContent -ToolboxNewVersion $newToolboxConfig.version
 }
 
 if ($oldCompanyConfig.version -ne $newCompanyConfig.version) {
@@ -78,17 +78,17 @@ if ($addedPlans -or $updatedPlans -or $deprecatedPlans) {
     $releaseContent += Get-PlansReleaseContent -AddedPlans $addedPlans -UpdatedPlans $updatedPlans -DeprecatedPlans $deprecatedPlans
 }
 
-if ($oldCompanyConfig.git.version -ne $newCompanyConfig.git.version) {
-    $releaseContent += Get-GitReleaseContent -GitNewVersion $newCompanyConfig.git.version
+if ($oldToolboxConfig.gitVersion -ne $newToolboxConfig.gitVersion) {
+    $releaseContent += Get-GitReleaseContent -GitNewVersion $newToolboxConfig.gitVersion
 }
 
-if ($oldCompanyConfig.proxy.version -ne $newCompanyConfig.proxy.version) {
-    $releaseContent += Get-ProxyReleaseContent -ProxyNewVersion $newCompanyConfig.proxy.version
+if ($oldToolboxConfig.proxyVersion -ne $newToolboxConfig.proxyVersion) {
+    $releaseContent += Get-ProxyReleaseContent -ProxyNewVersion $newToolboxConfig.proxyVersion
 }
 
 Write-Task "Updating global Toolbox configuration coming from your company"
 
-if ($oldCompanyConfig.git.version -ne $newCompanyConfig.git.version) {
+if ($oldToolboxConfig.gitVersion -ne $newToolboxConfig.gitVersion) {
     Write-Host "A new version of Git is available, updating it to the latest version"
     Expand-Git
     Set-GitSystemConfig
@@ -105,12 +105,12 @@ if (($oldCompanyConfig.git.globalConfig | ConvertTo-Json -Compress) -ne ($newCom
     Set-GitGlobalConfig -NoPrompt
 }
 
-if ($oldCompanyConfig.proxy.version -ne $newCompanyConfig.proxy.version) {
+if ($oldToolboxConfig.proxyVersion -ne $newToolboxConfig.proxyVersion) {
     Write-Host "A new version of your local proxy is available, updating it to the latest version"
     Update-Proxy
 }
 
-if (($oldCompanyConfig.proxy.config | ConvertTo-Json -Compress) -ne ($newCompanyConfig.proxy.config | ConvertTo-Json -Compress)) {
+if (($oldCompanyConfig.proxy | ConvertTo-Json -Compress) -ne ($newCompanyConfig.proxy | ConvertTo-Json -Compress)) {
     Write-Host "Updating local proxy config"
     Update-ProxyConfig
 }

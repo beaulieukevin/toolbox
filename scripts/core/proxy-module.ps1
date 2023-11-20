@@ -4,23 +4,23 @@ function Get-CompanyProxyConfig {
 }
 
 function Get-CompanyProxyVersion {
-    $companyProxyConfig = Get-CompanyProxyConfig
-    return $companyProxyConfig.version
+    $toolboxConfig = Get-ToolboxConfig
+    return $toolboxConfig.proxyVersion
 }
 
 function Get-CompanyProxyLocalHost {
     $companyProxyConfig = Get-CompanyProxyConfig
-    return $companyProxyConfig.config.localHost
+    return $companyProxyConfig.localHost
 }
 
 function Get-CompanyProxyLocalPort {
     $companyProxyConfig = Get-CompanyProxyConfig
-    return $companyProxyConfig.config.localPort
+    return $companyProxyConfig.localPort
 }
 
 function Get-CompanyProxyNoProxy {
     $companyProxyConfig = Get-CompanyProxyConfig
-    return $companyProxyConfig.config.noProxy
+    return $companyProxyConfig.noProxy
 }
 
 function Initialize-Proxy {
