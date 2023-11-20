@@ -487,9 +487,9 @@ function Register-ToolboxAutoUpdate {
     Register-ScheduledTask -Action $action -Trigger $trigger -TaskPath "\Toolbox\AutoUpdate" -TaskName $taskName -Description "Start Toolbox auto update" -ErrorAction SilentlyContinue | Out-Null
 }
 
-function Edit-PathEnvironmentVariableValue($BinPath, $BinFileName) {
+function Edit-EnvironmentValueData($EnvironmentValueName, $EnvironmentValueData, $BinFileName) {
     $regKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment', $true)
-    $path = $regKey.GetValue("PATH", "", "DoNotExpandEnvironmentNames")
+    $path = $regKey.GetValue($EnvironmentValueName, "", "DoNotExpandEnvironmentNames")
     $pathValues = $path.Split(";")
     $newPath = ""
 
@@ -506,7 +506,11 @@ function Edit-PathEnvironmentVariableValue($BinPath, $BinFileName) {
         }
     }
 
-    $regKey.SetValue("PATH", "$newPath;$BinPath", "ExpandString")
+    $regKey.SetValue($EnvironmentValueName, "$newPath;$EnvironmentValueData", "ExpandString")
+}
+
+function Edit-PathEnvironmentValueData($EnvironmentValueData, $BinFileName) {
+    Edit-EnvironmentValueData -EnvironmentValueName "PATH" -EnvironmentValueData $EnvironmentValueData -BinFileName $BinFileName
 }
 
 [System.Environment]::SetEnvironmentVariable("TOOLBOX_APPS", "$Env:TOOLBOX_HOME\local\apps", "Process")

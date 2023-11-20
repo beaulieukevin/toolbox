@@ -1,3 +1,7 @@
+# 1.1.17 (November 20, 2023)
+
+* Add function to make expandable env var generic
+
 # 1.1.16 (November 20, 2023)
 
 * Add function to update correctly PATH environment variable using REG_EXPAND_SZ ([#5](https://github.com/devwith-kev/toolbox/issues/5))
