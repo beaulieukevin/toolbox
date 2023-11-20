@@ -252,6 +252,7 @@ function Send-ToolboxAnalytics($Command, $Arguments, $ScriptError) {
         }
 
         $version = Get-ToolboxVersion
+        $configVersion = Get-CompanyConfigVersion
         $timestamp = Get-Date -Format "yyyy-MM-ddTHH:mm:ss"
 
         if ($ScriptError) {
@@ -262,6 +263,7 @@ function Send-ToolboxAnalytics($Command, $Arguments, $ScriptError) {
                 "timestamp"      = $timestamp;
                 "userName"       = $userName;
                 "toolboxVersion" = $version;
+                "configVersion"  = $configVersion;
                 "command"        = $Command;
                 "arguments"      = [string]$Arguments;
                 "errorMessage"   = $errorMessage;
@@ -274,6 +276,7 @@ function Send-ToolboxAnalytics($Command, $Arguments, $ScriptError) {
                 "timestamp"      = $timestamp;
                 "userName"       = $userName;
                 "toolboxVersion" = $version;
+                "configVersion"  = $configVersion;
                 "command"        = $Command;
                 "arguments"      = [string]$Arguments;
             }

@@ -1,3 +1,7 @@
+# 1.1.15 (November 20, 2023)
+
+* Add organization configuration version in the analytics ([#14](https://github.com/devwith-kev/toolbox/issues/14))
+
 # 1.1.14 (November 20, 2023)
 
 * Small refactoring of environment variables usage
