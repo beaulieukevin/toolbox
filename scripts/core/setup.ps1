@@ -1,5 +1,4 @@
 $rootPath = Resolve-Path -Path "$PSScriptRoot\..\.." -ErrorAction Stop
-[System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $($rootPath.Path), "Process")
 [System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $($rootPath.Path), "User")
 
 ."$Env:TOOLBOX_HOME\scripts\shared\common-module.ps1"
@@ -61,33 +60,8 @@ function Set-ToolboxDefaultLocalDirectories {
 function Set-ToolboxEnvironmentVariables {
     Write-Task "Setting Toolbox environment variables"
 
-    Write-Host "Preparing PATH environment variable"
-    $path = [System.Environment]::GetEnvironmentVariable("PATH", "User")
-    $newPath = "";
-    
-    if ($path) {
-        $pathValues = $path.Split(";")
-    }
-
-    foreach ($pathValue in $pathValues) {
-        if (Test-Path "$pathValue\toolbox.bat") {
-            $toolboxPathToDelete = $pathValue
-            $binPathToDelete = Resolve-Path -Path "$pathValue\..\local\bin" -ErrorAction SilentlyContinue
-        }
-    }
-
-    foreach ($pathValue in $pathValues) {
-        if ($pathValue -and (Test-Path $pathValue) -and ($pathValue -ne $toolboxPathToDelete) -and ($pathValue -ne $binPathToDelete)) {
-            $newPath += $pathValue + ";"
-        }
-    }
-
-    Write-Host "Adding Toolbox \bin folders to PATH environment variable"
-    $newPath += "$Env:TOOLBOX_HOME\bin;"
-    $newPath += "$Env:TOOLBOX_BIN;"
-
-    [System.Environment]::SetEnvironmentVariable("PATH", $newPath, "Process")
-    [System.Environment]::SetEnvironmentVariable("PATH", $newPath, "User")
+    Edit-PathEnvironmentValueData -EnvironmentValueData "%TOOLBOX_HOME%\bin" -BinFileName "toolbox.bat"
+    Edit-PathEnvironmentValueData -EnvironmentValueData "%TOOLBOX_HOME%\local\bin"
 }
 
 function Set-ToolboxAutoUpdate {

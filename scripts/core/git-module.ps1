@@ -46,25 +46,7 @@ function Expand-Git {
 function Set-GitPath {
     Write-Task "Setting Git environment variable"
 
-    $path = [System.Environment]::GetEnvironmentVariable("PATH", "User")
-    $newPath = "";
-
-    if ($path) {
-        $pathValues = $path.Split(";")
-    }
-
-    foreach ($pathValue in $pathValues) {
-        if ($pathValue -and (Test-Path $pathValue) -and !(Test-Path "$pathValue\git.exe")) {
-            $newPath += $pathValue + ";"
-        }
-    }
-
-    $gitPath = Resolve-Path -Path "$Env:TOOLBOX_HOME\local\git\cmd" -ErrorAction Stop
-    $newPath += $gitPath.Path + ";"
-
-    Write-Host "Updating PATH environment variable"
-    [System.Environment]::SetEnvironmentVariable("PATH", $newPath, "Process")
-    [System.Environment]::SetEnvironmentVariable("PATH", $newPath, "User")
+    Edit-PathEnvironmentValueData -EnvironmentValueData "%TOOLBOX_HOME%\local\git\cmd" -BinFileName "git.exe"
 }
 
 function Set-GitSystemConfig {

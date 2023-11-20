@@ -1,3 +1,7 @@
+# 1.2.0 (November 20, 2023)
+
+* Update PATH environment variables to be expandable to avoid unexpected behavior from machine OS.
+
 # 1.1.17 (November 20, 2023)
 
 * Add function to make expandable env var generic

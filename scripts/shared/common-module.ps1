@@ -494,19 +494,30 @@ function Edit-EnvironmentValueData($EnvironmentValueName, $EnvironmentValueData,
     $newPath = ""
 
     foreach ($pathValue in $pathValues) {
-        $expandedValue = $pathValue
+        if ($pathValue -ne $EnvironmentValueData) {
+            $expandedValue = $pathValue
 
-        while ($expandedValue -match '%(.*?)%') {
-            $varValue = [System.Environment]::GetEnvironmentVariable($matches[1], "User")
-            $expandedValue = $expandedValue -replace $matches[0], $varValue
-        }
+            while ($expandedValue -match '%(.*?)%') {
+                $varValue = [System.Environment]::GetEnvironmentVariable($matches[1], "User")
+                $expandedValue = $expandedValue -replace $matches[0], $varValue
+            }
 
-        if ($expandedValue -and (Test-Path $expandedValue) -and !(Test-Path "$expandedValue\$BinFileName")) {
-            $newPath += $pathValue + ";"
+            if ($BinFileName) {
+                if ($expandedValue -and !(Test-Path "$expandedValue\$BinFileName")) {
+                    $newPath += $pathValue + ";"
+                }
+            }
+            else {
+                if ($expandedValue) {
+                    $newPath += $pathValue + ";"
+                }
+            }
         }
     }
 
-    $regKey.SetValue($EnvironmentValueName, "$newPath;$EnvironmentValueData", "ExpandString")
+    $regKey.SetValue($EnvironmentValueName, "$EnvironmentValueData;$newPath", "ExpandString")
+
+    [System.Environment]::SetEnvironmentVariable("SIGNOUT_REQUIRED", "1", "Process")
 }
 
 function Edit-PathEnvironmentValueData($EnvironmentValueData, $BinFileName) {
