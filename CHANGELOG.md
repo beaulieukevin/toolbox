@@ -1,3 +1,7 @@
+# 1.1.14 (November 20, 2023)
+
+* Small refactoring of environment variables usage
+
 # 1.1.13 (November 20, 2023)
 
 * Removed ResetToolboxRepository within `toolbox.ps1`file which was leading to bad user experience when it comes to development ([#12](https://github.com/devwith-kev/toolbox/issues/12))

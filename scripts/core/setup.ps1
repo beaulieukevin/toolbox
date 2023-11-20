@@ -1,9 +1,6 @@
 $rootPath = Resolve-Path -Path "$PSScriptRoot\..\.." -ErrorAction Stop
 [System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $($rootPath.Path), "Process")
 [System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $($rootPath.Path), "User")
-[System.Environment]::SetEnvironmentVariable("TOOLBOX_APPS", "$($rootPath.Path)\local\apps", "Process")
-[System.Environment]::SetEnvironmentVariable("TOOLBOX_PLANS", "$($rootPath.Path)\local\plans", "Process")
-[System.Environment]::SetEnvironmentVariable("TOOLBOX_BIN", "$($rootPath.Path)\local\bin", "Process")
 
 ."$Env:TOOLBOX_HOME\scripts\shared\common-module.ps1"
 ."$Env:TOOLBOX_HOME\scripts\core\proxy-module.ps1"
