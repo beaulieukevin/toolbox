@@ -82,9 +82,13 @@ function Get-PlanGitRepositoryDescription($PlanName) {
     return $companyPlans.$PlanName.description
 }
 
+function Get-ToolboxConfig {
+    return Get-Content -Path "$Env:TOOLBOX_HOME\toolbox.json" -ErrorAction Stop | ConvertFrom-JSON
+}
+
 function Get-ToolboxVersion {
-    $toolbox = Get-Content -Path "$Env:TOOLBOX_HOME\toolbox.json" -ErrorAction Stop | ConvertFrom-JSON
-    return $toolbox.version
+    $toolboxConfig = Get-ToolboxConfig
+    return $toolboxConfig.version
 }
 
 function Test-PlanConfig($PlanName, $PlansTemporaryDirectory) {
@@ -434,13 +438,6 @@ function Remove-Shortcut($ShortcutName) {
         $shortcutPath = "$fullShortcutsPath\$ShortcutName" + ".lnk"
         Remove-Item -Path $shortcutPath -Force -ErrorAction SilentlyContinue
     }
-}
-
-function Reset-ToolboxLocalRepository {
-    $companyConfig = Get-CompanyConfig
-    $defaultBranch = $companyConfig.toolbox.defaultBranch
-
-    Start-Git @("-C", "$Env:TOOLBOX_HOME", "reset", "--hard", "origin/$defaultBranch", "--quiet")
 }
 
 function Start-Git($Params) {

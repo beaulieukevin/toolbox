@@ -1,8 +1,6 @@
 ."$Env:TOOLBOX_HOME\scripts\shared\common-module.ps1"
 
 try {
-	Reset-ToolboxLocalRepository
-
 	$command = Get-FirtArgument -Arguments $args
 	$arguments = Get-RemainingArguments -Arguments $args
 

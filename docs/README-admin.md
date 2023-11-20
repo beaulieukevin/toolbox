@@ -57,7 +57,7 @@ It contains the version of your configuration file. It is your responsibility to
     "supportEmail": "support@devwithkev.com",
     "smtpServer": "smtp.devwithkev.com",
     "smtpPort": 25,
-    "mainBrandHexColor": "#000000"
+    "mainBrandHexColor": "#013220"
   }
 }
 ```
@@ -97,7 +97,7 @@ It contains the version of your configuration file. It is your responsibility to
 {
   "plans": {
     "vscode": {
-      "gitRepository": "https://github.com/devwith-kev/vscode.git",
+      "gitRepository": "https://github.com/devwith-kev/toolbox-plan-vscode.git",
       "description": "Visual Studio Code, also commonly referred to as VS Code, is a source-code editor made by Microsoft with the Electron Framework, for Windows, Linux and macOS. Features include support for debugging, syntax highlighting, intelligent code completion, snippets and code refactoring."
     }
   }
@@ -148,7 +148,6 @@ You can customize Toolbox by provisioning environment variables at process level
 ```json
 {
   "git": {
-    "version": "2.42.0.2",
     "systemConfig": {
       "--remove-section": "include",
       "core.pager": "\"\"",
@@ -170,7 +169,6 @@ You can customize Toolbox by provisioning environment variables at process level
 
 | Field        | Required | Description                                                                                                                                                                                   |
 |--------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| version      | true     | The version of Git specified in the \libs folder.<br>If the Git .zip file is named MinGit-2.42.0.2-64-bit.zip then the version **2.42.0.2** should be mentioned.                                                |
 | systemConfig | false    | If you want to set common Git configuration at **system scope** for all your users then you can add a list of key value pairs.<br>Behind the scene, Toolbox will execute implicitly `git config --system KEY VALUE`.  |
 | globalConfig | false    | If you want to set common Git configuration at **global scope** for all your users then you can add a list of key value pairs.<br>Behind the scene, Toolbox will execute implicitly `git config --global KEY VALUE`. |
 
@@ -201,12 +199,9 @@ You can activate Toolbox analytics by adding the object above. It will allow you
 ```json
 {
   "proxy": {
-    "version": "0.4.0",
-    "config": {
-      "localHost": "127.0.0.1",
-      "localPort": "3128",
-      "noProxy": "127.0.0.*,10.*.*.*,192.168.*.*"
-    }
+    "localHost": "127.0.0.1",
+    "localPort": "3128",
+    "noProxy": "127.0.0.*,10.*.*.*,192.168.*.*"
   }
 }
 ```
@@ -215,9 +210,8 @@ If your organization is running behind a corporate proxy, it might be required t
 
 | Field            | Required | Description                                                                                                                              |
 |------------------|----------|------------------------------------------------------------------------------------------------------------------------------------------|
-| version          | true     | The version of Px specified in the \libs folder.<br>If the Px .zip file is named px-v0.4.0.zip then the version 0.4.0 must be mentioned. |
-| config.localHost | true     | The local host your local proxy will run on. We recommend to use the localhost IP address: `127.0.0.1`.                                  |
-| config.localPort | true     | The local port your local proxy will listen on. We recommend to use `3128` port.                                                         |
+| localHost | true     | The local host your local proxy will run on. We recommend to use the localhost IP address: `127.0.0.1`.                                  |
+| localPort | true     | The local port your local proxy will listen on. We recommend to use `3128` port.                                                         |
 | noProxy          | false    | The list of IP addresses for which the proxy shouldn't be used. Each IP addresses must be separated by a comma `,`.                      |
 
 # Extra Features

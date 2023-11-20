@@ -1,6 +1,6 @@
 function Get-GitVersion {
-    $companyConfig = Get-CompanyConfig
-    return $companyConfig.git.version
+    $toolboxConfig = Get-ToolboxConfig
+    return $toolboxConfig.gitVersion
 }
 
 function Get-GitSystemConfig {
