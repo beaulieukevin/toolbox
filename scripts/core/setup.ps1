@@ -1,4 +1,5 @@
 $rootPath = Resolve-Path -Path "$PSScriptRoot\..\.." -ErrorAction Stop
+[System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $($rootPath.Path), "Process")
 [System.Environment]::SetEnvironmentVariable("TOOLBOX_HOME", $($rootPath.Path), "User")
 
 ."$Env:TOOLBOX_HOME\scripts\shared\common-module.ps1"
