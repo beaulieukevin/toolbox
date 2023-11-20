@@ -1,3 +1,7 @@
+# 1.1.16 (November 20, 2023)
+
+* Add function to update correctly PATH environment variable using REG_EXPAND_SZ ([#5](https://github.com/devwith-kev/toolbox/issues/5))
+
 # 1.1.15 (November 20, 2023)
 
 * Add organization configuration version in the analytics ([#14](https://github.com/devwith-kev/toolbox/issues/14))
