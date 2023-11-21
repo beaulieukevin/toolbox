@@ -487,7 +487,7 @@ function Register-ToolboxAutoUpdate {
     Register-ScheduledTask -Action $action -Trigger $trigger -TaskPath "\Toolbox\AutoUpdate" -TaskName $taskName -Description "Start Toolbox auto update" -ErrorAction SilentlyContinue | Out-Null
 }
 
-function Edit-EnvironmentValueData($EnvironmentValueName, $EnvironmentValueData, $BinFileName) {
+function Edit-ExpandableEnvironmentMultipleValueData($EnvironmentValueName, $EnvironmentValueData) {
     $regKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment', $true)
     $path = $regKey.GetValue($EnvironmentValueName, "", "DoNotExpandEnvironmentNames")
     $pathValues = $path.Split(";")
@@ -502,28 +502,20 @@ function Edit-EnvironmentValueData($EnvironmentValueName, $EnvironmentValueData,
                 $expandedValue = $expandedValue -replace $matches[0], $varValue
             }
             
-            if ($expandedValue -ne $EnvironmentValueData) {
-                if ($BinFileName) {
-                    if ($expandedValue -and !(Test-Path "$expandedValue\$BinFileName")) {
-                        $newPath += $pathValue + ";"
-                    }
-                }
-                else {
-                    if ($expandedValue) {
-                        $newPath += $pathValue + ";"
-                    }
-                }
+            if ($expandedValue -and ($expandedValue -ne $EnvironmentValueData)) {
+                $newPath += $pathValue + ";"
             }
         }
     }
 
     $regKey.SetValue($EnvironmentValueName, "$EnvironmentValueData;$newPath", "ExpandString")
-
     [System.Environment]::SetEnvironmentVariable("SIGNOUT_REQUIRED", "1", "Process")
 }
 
-function Edit-PathEnvironmentValueData($EnvironmentValueData, $BinFileName) {
-    Edit-EnvironmentValueData -EnvironmentValueName "PATH" -EnvironmentValueData $EnvironmentValueData -BinFileName $BinFileName
+function Edit-ExpandableEnvironmentValueData($EnvironmentValueName, $EnvironmentValueData) {
+    $regKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment', $true)
+    $regKey.SetValue($EnvironmentValueName, $EnvironmentValueData, "ExpandString")
+    [System.Environment]::SetEnvironmentVariable("SIGNOUT_REQUIRED", "1", "Process")
 }
 
 function Show-SignOutRequired {

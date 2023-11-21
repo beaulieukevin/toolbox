@@ -46,7 +46,7 @@ function Expand-Git {
 function Set-GitPath {
     Write-Task "Setting Git environment variable"
 
-    Edit-PathEnvironmentValueData -EnvironmentValueData "%TOOLBOX_HOME%\local\git\cmd" -BinFileName "git.exe"
+    Edit-ExpandableEnvironmentMultipleValueData -EnvironmentValueName "PATH" -EnvironmentValueData "%TOOLBOX_HOME%\local\git\cmd"
 }
 
 function Set-GitSystemConfig {

@@ -63,8 +63,8 @@ function Set-ToolboxDefaultLocalDirectories {
 function Set-ToolboxEnvironmentVariables {
     Write-Task "Setting Toolbox environment variables"
 
-    Edit-PathEnvironmentValueData -EnvironmentValueData "%TOOLBOX_HOME%\bin" -BinFileName "toolbox.bat"
-    Edit-PathEnvironmentValueData -EnvironmentValueData "%TOOLBOX_HOME%\local\bin"
+    Edit-ExpandableEnvironmentMultipleValueData -EnvironmentValueName "PATH" -EnvironmentValueData "%TOOLBOX_HOME%\bin"
+    Edit-ExpandableEnvironmentMultipleValueData -EnvironmentValueName "PATH" -EnvironmentValueData "%TOOLBOX_HOME%\local\bin"
 }
 
 function Set-ToolboxAutoUpdate {

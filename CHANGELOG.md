@@ -1,3 +1,7 @@
+# 1.2.2 (November 21, 2023)
+
+* Update Edit-ExpandableEnvironmentValueData function to allow single or multiple values in registry
+
 # 1.2.1 (November 20, 2023)
 
 * Added logic to check expanded value with the added value in Edit-EnvironmentValueData
