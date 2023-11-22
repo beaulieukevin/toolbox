@@ -68,7 +68,7 @@ It contains the version of your configuration file. It is your responsibility to
 | emailDomain       | true     | The email domain of your organization.<br>It will be used while setting the default user email during Git configuration.              |
 | supportEmail      | true     | The support email address a user can reach in case of support request.<br>This email is used in multiple Toolbox features including automated release notes. |
 | smtpServer        | false    | The SMTP server of your organization.<br>It will be used when Toolbox will send an automated release notes email to the user.                                |
-| smtpPort          | false    | The SMTP port of your organization.<br>It will be used when Toolbox will send an automated release notes email to the user.                                  |
+| smtpPort          | false<br>(true if 'smtpServer' is added)    | The SMTP port of your organization.<br>It will be used when Toolbox will send an automated release notes email to the user.                                  |
 | mainBrandHexColor | false    | The main Hex color code of your organization.<br>The color will be used in the automated release notes email.                                                |
 
 ### 3 - Toolbox
@@ -107,6 +107,8 @@ It contains the version of your configuration file. It is your responsibility to
 Plans are the main heart of Toolbox, this is where you define all the plans Toolbox will refer to. The list of plans are being referred by the `toolbox list` command. For more information on how to create or update an existing plan, read the [plan management guide](/docs/README-plan-management.md).
 
 In this example `vscode` is a plan. Users will be able to execute a plan installation by using `toolbox install vscode`. It is up to you to define the plan name.
+
+If you don't have plans yet, either don't add the `plans` object or leave it empty.
 
 | Field         | Required | Description                                                                      |
 |---------------|----------|----------------------------------------------------------------------------------|

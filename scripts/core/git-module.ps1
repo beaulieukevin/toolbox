@@ -55,6 +55,8 @@ function Set-GitSystemConfig {
     $caBundlePath = Resolve-Path -Path "$Env:TOOLBOX_HOME\local\git\mingw64\etc\ssl\certs\ca-bundle.crt" -ErrorAction Stop
     Write-Host "Setting 'http.sslCAInfo' key to" $caBundlePath.Path
     Start-Git @("config", "--system", "http.sslCAInfo", $caBundlePath.Path)
+    Write-Host "Setting 'init.defaultBranch' key to main"
+    Start-Git @("config", "--system", "init.defaultBranch", "main")
     
     $gitSystemConfig = Get-GitSystemConfig
     

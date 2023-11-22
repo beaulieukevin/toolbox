@@ -1,3 +1,8 @@
+# 1.3.0 (November 22, 2023)
+
+* Set Git init to init using main branch instead of master which was causing the syncing with remote to fail.
+* Correct no proxy configuration setup which was failing if no value was passed in the `config.json`
+
 # 1.2.2 (November 21, 2023)
 
 * Update Edit-ExpandableEnvironmentValueData function to allow single or multiple values in registry

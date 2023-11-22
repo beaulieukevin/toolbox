@@ -78,6 +78,10 @@ function Set-PxConfig {
     $localPort = Get-CompanyProxyLocalPort
     $noProxy = Get-CompanyProxyNoProxy
 
+    if (!$noProxy) {
+        $noProxy = ""
+    }
+
     Write-Host "Fetching company's proxy settings"
 
     $address = [System.Net.WebProxy]::GetDefaultProxy().Address
@@ -86,7 +90,7 @@ function Set-PxConfig {
         $organizationProxy = $address.Authority
         
         Write-Host "Saving Px configuration file"
-
+        
         $startParams = @{
             FilePath     = "$Env:TOOLBOX_HOME\local\px\px.exe"
             ArgumentList = "--server=$organizationProxy", "--listen=$localHost", "--port=$localPort", "--noproxy=$noProxy", "--save"
