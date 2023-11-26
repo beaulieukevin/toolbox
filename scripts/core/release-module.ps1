@@ -362,7 +362,7 @@ function Send-ReleaseNotesMailMessage($ReleaseContent) {
             <table role="presentation" style="width:600px;border-collapse:collapse;border:1px solid #cccccc;border-spacing:0;">
               <tr>
                 <td align="center" style="padding:36px 30px 36px 30px;background:{{ORGANIZATION_BRAND_COLOR}};">
-                  <img src="cid:toolbox.png" alt="Toolbox icon" width="300" style="height:auto;display:block;" />
+                  <img src="cid:toolbox-name.png" alt="Toolbox icon" width="300" style="height:auto;display:block;" />
                 </td>
               </tr>
               {{RELEASE_CONTENT}}
@@ -427,5 +427,5 @@ function Send-ReleaseNotesMailMessage($ReleaseContent) {
   $smtpServer = $companyConfig.organization.smtpServer
   $smtpPort = $companyConfig.organization.smtpPort
 
-  Send-MailMessage -From $emailFrom -To $emailTo -Subject $emailSubject -Body $emailBody -BodyAsHtml -SmtpServer $smtpServer -Port $smtpPort -Attachments "$Env:TOOLBOX_HOME\rsc\toolbox.png", "$Env:TOOLBOX_HOME\rsc\github.png" -ErrorAction SilentlyContinue
+  Send-MailMessage -From $emailFrom -To $emailTo -Subject $emailSubject -Body $emailBody -BodyAsHtml -SmtpServer $smtpServer -Port $smtpPort -Attachments "$Env:TOOLBOX_HOME\rsc\toolbox-name.png", "$Env:TOOLBOX_HOME\rsc\github.png" -ErrorAction SilentlyContinue
 }

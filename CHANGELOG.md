@@ -1,3 +1,8 @@
+# 1.3.1 (November 26, 2023)
+
+* Update README.md to simplify the definition of Toolbox
+* Update resources for Toolbox re branding
+
 # 1.3.0 (November 22, 2023)
 
 * Set Git init to init using main branch instead of master which was causing the syncing with remote to fail.
