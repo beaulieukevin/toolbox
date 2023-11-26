@@ -1,4 +1,4 @@
-![Toolbox Image](/rsc/toolbox-name.png)
+![Toolbox Image](/rsc/toolbox.png)
 
 # What is it?
 
