@@ -284,6 +284,7 @@ function Send-ToolboxAnalytics($Command, $Arguments, $ScriptError) {
         
         $storagePath = $analytics.storagePath
         $maxFileSizeInMb = $analytics.maxFileSizeInMb
+        $fileName = $userName + "_" + $fileName
 
         Optimize-AnalyticsFile -StoragePath $storagePath -FileName $fileName -MaxFileSizeInMb $maxFileSizeInMb
         Add-Analytic -StoragePath $storagePath -FileName $fileName -Data $analytic
