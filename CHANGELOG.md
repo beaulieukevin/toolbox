@@ -1,3 +1,13 @@
+# 1.4.0 (December 17, 2023)
+
+## Feature
+* Update Git to version 2.43.0.1 ([#28](https://github.com/devwith-kev/toolbox/issues/28))
+
+## Bug fix
+* Correct function Edit-ExpandableEnvironmentMultipleValueData to manage non expanded value ([#20](https://github.com/devwith-kev/toolbox/issues/20))
+* Only ask to sign out when PATH values are updated ([#21](https://github.com/devwith-kev/toolbox/issues/21))
+* Correct analytical functions API to lock analytical file while being updated by multiple users ([#27](https://github.com/devwith-kev/toolbox/issues/27))
+
 # 1.3.2 (November 26, 2023)
 
 * Change Toolbox resource name
