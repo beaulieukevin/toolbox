@@ -2,6 +2,7 @@
 
 ## Feature
 * Update Git to version 2.43.0.1 ([#28](https://github.com/devwith-kev/toolbox/issues/28))
+* Handle properly non configured SMTP or incorrect configuration and warn user the release note has not been sent in case of an update through `toolbox update` ([#29](https://github.com/devwith-kev/toolbox/issues/29))
 
 ## Bug fix
 * Correct function Edit-ExpandableEnvironmentMultipleValueData to manage non expanded value ([#20](https://github.com/devwith-kev/toolbox/issues/20))
