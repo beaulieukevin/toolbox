@@ -431,7 +431,7 @@ function Send-ReleaseNotesMailMessage($ReleaseContent) {
     Send-MailMessage -From $emailFrom -To $emailTo -Subject $emailSubject -Body $emailBody -BodyAsHtml -SmtpServer $smtpServer -Port $smtpPort -Attachments "$Env:TOOLBOX_HOME\rsc\toolbox.png", "$Env:TOOLBOX_HOME\rsc\github.png" -ErrorAction SilentlyContinue
   }
   catch {
-    Write-Host "Toolbox release notes were not sent to your email address."
+    Write-Host "Toolbox release notes were not sent to your email address." -ForegroundColor Yellow
     Write-Host "The SMTP configuration is not set properly. Contact $supportEmail" -ForegroundColor Yellow
   }
 }
