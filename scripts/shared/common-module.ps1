@@ -193,9 +193,25 @@ function Set-UserConfig($Config) {
     $Config | ConvertTo-JSON | Set-Content "$Env:TOOLBOX_HOME\local\config.json" -ErrorAction Stop
 }
 
-function Get-CompanyEmailDomain {
+function Get-CompanyUserEmail {
     $companyConfig = Get-CompanyConfig
-    return $companyConfig.organization.emailDomain
+    $ldapPath = $companyConfig.organization.ldapPath
+    
+    $currentUsername = $Env:USERNAME
+    $directoryEntry = New-Object System.DirectoryServices.DirectoryEntry($ldapPath)
+    $directorySearcher = New-Object System.DirectoryServices.DirectorySearcher($directoryEntry)
+    $directorySearcher.Filter = "(&(objectClass=user)(sAMAccountName=$currentUsername))"
+    $searchResult = $directorySearcher.FindOne()
+
+    if ($null -ne $searchResult) {
+        $userProperties = $searchResult.Properties
+        $directorySearcher.Dispose()
+        $directoryEntry.Dispose()
+        return $userProperties.mail;
+    }
+    
+    $emailDomain = $companyConfig.organization.emailDomain
+    return "$Env:USERNAME@$emailDomain"
 }
 
 function Get-CompanyEnvironmentVariables {

@@ -54,6 +54,7 @@ It contains the version of your configuration file. It is your responsibility to
   "organization": {
     "name": "devwith.kev",
     "emailDomain": "devwithkev.com",
+    "ldapPath": "LDAP://DC=devwithkev,DC=com",
     "supportEmail": "support@devwithkev.com",
     "smtpServer": "smtp.devwithkev.com",
     "smtpPort": 25,
@@ -65,7 +66,8 @@ It contains the version of your configuration file. It is your responsibility to
 | Field             | Required | Description                                                                                                                                                  |
 |-------------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | name              | true     | The name of your organization.<br>It will be displayed in multiple Toolbox commands and features.                                                            |
-| emailDomain       | true     | The email domain of your organization.<br>It will be used while setting the default user email during Git configuration.              |
+| emailDomain       | true     | The email domain of your organization.<br>It will be used while setting the default user email during Git configuration and for sending automated release notes.             |
+| ldapPath       | false     | The LDAP path used to retrieve the logged in user email. This is used for Git installation and Toolbox releases through email.   |
 | supportEmail      | true     | The support email address a user can reach in case of support request.<br>This email is used in multiple Toolbox features including automated release notes. |
 | smtpServer        | false    | The SMTP server of your organization.<br>It will be used when Toolbox will send an automated release notes email to the user.                                |
 | smtpPort          | false<br>(true if 'smtpServer' is added)    | The SMTP port of your organization.<br>It will be used when Toolbox will send an automated release notes email to the user.                                  |
