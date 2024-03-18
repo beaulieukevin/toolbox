@@ -420,9 +420,8 @@ function Send-ReleaseNotesMailMessage($ReleaseContent) {
   $emailBody = $emailBody.Replace("{{CURRENT_YEAR}}", $currentYear)
   $emailBody = $emailBody.Replace("{{SUPPORT_EMAIL}}", $supportEmail)
 
-  $emailDomain = Get-CompanyEmailDomain
-  $emailFrom = "$Env:USERNAME@$emailDomain"
-  $emailTo = "$Env:USERNAME@$emailDomain"
+  $emailFrom = Get-CompanyUserEmail
+  $emailTo = $emailFrom
   $emailSubject = "Toolbox Release Notes"
   $smtpServer = $companyConfig.organization.smtpServer
   $smtpPort = $companyConfig.organization.smtpPort

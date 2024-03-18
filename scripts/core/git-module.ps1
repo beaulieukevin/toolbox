@@ -85,13 +85,13 @@ function Set-GitGlobalConfig {
         Write-Host "Setting 'user.name' key to" $gitName
         Start-Git @("config", "--global", "user.name", $gitName)
 
-        $emailDomain = Get-CompanyEmailDomain
-        $userInput = Read-Host "Enter your email required for Git (default: $Env:USERNAME@$emailDomain)"
+        $userEmail = Get-CompanyUserEmail
+        $userInput = Read-Host "Enter your email required for Git (default: $userEmail)"
         if ($userInput) {
             $gitEmail = $userInput
         }
         else {
-            $gitEmail = "$Env:USERNAME@$emailDomain"
+            $gitEmail = $userEmail
         }
         Write-Host "Setting 'user.email' key to" $gitEmail
         Start-Git @("config", "--global", "user.email", $gitEmail)

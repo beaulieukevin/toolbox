@@ -1,3 +1,9 @@
+# 1.5.0 (March 18, 2024)
+
+## Feature
+* Update Git to version 2.44.0.1 ([#36](https://github.com/devwith-kev/toolbox/issues/36))
+* Update Git module and release module to get user email from LDAP instead of username plus organization domain. This is useful if a company handle multiple domains ([#34](https://github.com/devwith-kev/toolbox/issues/34))
+
 # 1.4.0 (December 17, 2023)
 
 ## Feature
